@@ -1,7 +1,13 @@
 import { USER_LOGIN, USER_LOGIN_SUCCESS, USER_HAS_LOGIN, USER_LOGOUT_SUCCESS, USER_DATA_SUCCESS, USER_RESET_ERRORS } from './types';
 import { USER_URL, LOGOUT_URL } from '../listrUrls';
-import Cookies from 'js-cookie';
 
+_removeData = async (key) => {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (error) {
+    // Error retrieving data
+  }
+};
 
 export const beginUserLogin = () => dispatch =>{
   return{
@@ -35,7 +41,6 @@ export const getUserData = (url, token) => dispatch => {
 }
 
 export const performLogin = (url, userData) => dispatch => {
-  var csrftoken = Cookies.get('csrftoken');
   dispatch(beginUserLogin());
   fetch(url, {
     method: 'POST',
