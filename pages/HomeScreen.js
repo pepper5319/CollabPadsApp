@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
 
 class HomeScreen extends Component {
   render() {
+    console.log(this.props.token);
     return (
         <View style={styles.container}>
           <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>

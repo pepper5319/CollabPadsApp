@@ -36,14 +36,12 @@ createRootNavigator = (load) => {
   });
 }
 
-const AppContainer = createAppContainer(AppNavigator);
-
 class App extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      initialScreen: 'Home'
+      initialScreen: 'Login'
     }
     this.appContainer = null;
     this.checkIfLoggedIn = this.checkIfLoggedIn.bind(this);
@@ -57,10 +55,10 @@ class App extends Component {
   checkIfLoggedIn() {
     var cachedToken = AsyncStorage.getItem('userToken');
     cachedToken.then(tok => {
-      if (tok !== null && tok !== undefined) {
-        console.log(tok);
+      console.log(tok);
+      if (tok !== null && tok !== undefined && tok !== '') {
         this.props.setUserToken(tok);
-          this.setState({initialScreen: 'Home'});
+        this.setState({initialScreen: 'Home'});
         return true;
       }else{
         this.setState({initialScreen: 'Login'});

@@ -1,7 +1,7 @@
-// const baseUrl = 'http://localhost:8000'; //DEVELOPMENT
-const baseUrl = ''; //PRODUCTION
-// export const BASE_ROUTER_URL = '/'; //DEVELOPMENT
-export const BASE_ROUTER_URL = '/dashboard/'; //PRODUCTION
+const baseUrl = 'http://localhost:8000'; //DEVELOPMENT
+// const baseUrl = ''; //PRODUCTION
+export const BASE_ROUTER_URL = '/'; //DEVELOPMENT
+// export const BASE_ROUTER_URL = '/dashboard/'; //PRODUCTION
 
 // export const SHARED_LINK_URL = 'http://localhost:8000/lists?l=';
 export const SHARED_LINK_URL = 'https://www.collabpads.com/lists?l=';

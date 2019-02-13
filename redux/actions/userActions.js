@@ -45,8 +45,7 @@ export const performLogin = (url, userData) => dispatch => {
   fetch(url, {
     method: 'POST',
     headers: {
-      'content-type': 'application/json',
-      'X-CSRFToken': csrftoken
+      'content-type': 'application/json'
     },
     body: JSON.stringify(userData)
   })

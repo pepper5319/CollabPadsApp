@@ -36,6 +36,7 @@ export default function userReducer(state = {token: null, loading: false, userna
             token: action.token
           }
         }else{
+          console.log(action.payload);
           if(action.payload.username){
             return {
               token: null,
