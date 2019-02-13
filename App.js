@@ -14,6 +14,7 @@ import {createStackNavigator, createAppContainer} from "react-navigation";
 import {Appbar} from 'react-native-paper';
 import HomeScreen from './pages/HomeScreen.js';
 import Detail from './pages/Detail.js';
+import Login from './pages/LoginScreen.js';
 import {performLogin, setUserToken} from './redux/actions/userActions.js';
 import {AsyncStorage} from 'react-native';
 
@@ -21,12 +22,14 @@ const styles = StyleSheet.create({});
 
 const AppNavigator = createStackNavigator({
   Home: HomeScreen,
-  Details: Detail
+  Details: Detail,
+  Login: Login
 }, {
   headerMode: 'none',
   navigationOptions: {
     headerVisible: false
-  }
+  },
+  initialRouteName: 'Login'
 });
 const AppContainer = createAppContainer(AppNavigator);
 
