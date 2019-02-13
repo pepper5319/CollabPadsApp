@@ -20,46 +20,60 @@ import {AsyncStorage} from 'react-native';
 
 const styles = StyleSheet.create({});
 
-const AppNavigator = createStackNavigator({
-  Home: HomeScreen,
-  Details: Detail,
-  Login: Login
-}, {
-  headerMode: 'none',
-  navigationOptions: {
-    headerVisible: false
-  },
-  initialRouteName: 'Login'
-});
+const AppNavigator =
+
+createRootNavigator = (load) => {
+  return createStackNavigator({
+    Home: HomeScreen,
+    Details: Detail,
+    Login: Login
+  }, {
+    headerMode: 'none',
+    navigationOptions: {
+      headerVisible: false
+    },
+    initialRouteName: load
+  });
+}
+
 const AppContainer = createAppContainer(AppNavigator);
 
 class App extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      initialScreen: 'Home'
+    }
+    this.appContainer = null;
     this.checkIfLoggedIn = this.checkIfLoggedIn.bind(this);
   }
 
   componentWillMount() {
     this.checkIfLoggedIn();
+    this.appContainer = createAppContainer(createRootNavigator(this.state.initialScreen));
   }
 
   checkIfLoggedIn() {
     var cachedToken = AsyncStorage.getItem('userToken');
     cachedToken.then(tok => {
       if (tok !== null && tok !== undefined) {
+        console.log(tok);
         this.props.setUserToken(tok);
+          this.setState({initialScreen: 'Home'});
         return true;
+      }else{
+        this.setState({initialScreen: 'Login'});
+        return false;
       }
     });
   }
 
   render() {
-    console.log(this.props.token);
     return (<View style={{
         flex: 1
       }}>
-      <AppContainer/>
+      <this.appContainer/>
 
     </View>);
   }
