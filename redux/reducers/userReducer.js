@@ -1,4 +1,13 @@
 import { USER_LOGIN, USER_LOGIN_SUCCESS, USER_HAS_LOGIN, USER_LOGOUT_SUCCESS, USER_DATA_SUCCESS, USER_RESET_ERRORS } from "../actions/types";
+import {AsyncStorage} from 'react-native';
+
+_storeData = async (key, value) => {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (error) {
+    // Error saving data
+  }
+};
 
 export default function userReducer(state = {token: null, loading: false, username: null, error: null}, action){
     switch (action.type) {
@@ -14,15 +23,14 @@ export default function userReducer(state = {token: null, loading: false, userna
           loading: true
         }
       case USER_HAS_LOGIN:
-        localStorage.setItem('token', action.payload);
+        _storeData('userToken', action.payload);
         return {
           loading: false,
           token: action.payload
         }
       case USER_LOGIN_SUCCESS:
         if(action.payload.key){
-          localStorage.setItem('token', action.payload.key);
-          window.location.reload();
+          _storeData('userToken', action.payload.key);
           return {
             loading: false,
             token: action.token
