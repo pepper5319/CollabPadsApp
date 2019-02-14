@@ -22,10 +22,13 @@ export const resetErrors = () => dispatch =>{
 }
 
 export const setUserToken = (token) => dispatch => {
-  dispatch({
-    type: USER_HAS_LOGIN,
-    payload: token
-  });
+  if(token !== null && token !== undefined){
+    dispatch({
+      type: USER_HAS_LOGIN,
+      payload: token
+    });
+  }
+
 }
 
 export const getUserData = (url, token) => dispatch => {

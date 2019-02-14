@@ -15,26 +15,26 @@ import {Appbar} from 'react-native-paper';
 import HomeScreen from './pages/HomeScreen.js';
 import Detail from './pages/Detail.js';
 import Login from './pages/LoginScreen.js';
-import {performLogin, setUserToken} from './redux/actions/userActions.js';
+import Loading from './pages/LoadingScreen.js';
 import {AsyncStorage} from 'react-native';
 
 const styles = StyleSheet.create({});
 
-const AppNavigator =
 
-createRootNavigator = (load) => {
-  return createStackNavigator({
-    Home: HomeScreen,
-    Details: Detail,
-    Login: Login
-  }, {
-    headerMode: 'none',
-    navigationOptions: {
-      headerVisible: false
-    },
-    initialRouteName: load
-  });
-}
+  const AppNavigator = createStackNavigator({
+      Home: HomeScreen,
+      Details: Detail,
+      Login: Login,
+      Loading: Loading
+    }, {
+      headerMode: 'none',
+      navigationOptions: {
+        headerVisible: false
+      },
+      initialRouteName: 'Loading'
+    });
+  const AppContainer = createAppContainer(AppNavigator);
+
 
 class App extends Component {
 
@@ -43,37 +43,20 @@ class App extends Component {
     this.state = {
       initialScreen: 'Login'
     }
-    this.appContainer = null;
-    this.checkIfLoggedIn = this.checkIfLoggedIn.bind(this);
+    this.appContainer = null
   }
 
   componentWillMount() {
-    this.checkIfLoggedIn();
-    this.appContainer = createAppContainer(createRootNavigator(this.state.initialScreen));
   }
 
-  checkIfLoggedIn() {
-    var cachedToken = AsyncStorage.getItem('userToken');
-    cachedToken.then(tok => {
-      console.log(tok);
-      if (tok !== null && tok !== undefined && tok !== '') {
-        this.props.setUserToken(tok);
-        this.setState({initialScreen: 'Home'});
-        return true;
-      }else{
-        this.setState({initialScreen: 'Login'});
-        return false;
-      }
-    });
+  componentDidMount() {
   }
 
   render() {
-    return (<View style={{
-        flex: 1
-      }}>
-      <this.appContainer/>
-
-    </View>);
+    return (
+      <View style={{ flex: 1 }}>
+        <AppContainer />
+      </View>);
   }
 }
 
@@ -81,4 +64,4 @@ const mapStateToProps = state => ({
   token: state.users.token
 });
 
-export default connect(mapStateToProps, {setUserToken})(App);
+export default connect(mapStateToProps, {})(App);

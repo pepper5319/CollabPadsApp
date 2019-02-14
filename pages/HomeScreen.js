@@ -5,6 +5,7 @@ import PadCard from '../components/PadCard.js';
 import BottomNav from '../components/BottomNav.js';
 import { FAB, Card, Appbar } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
+import { StackActions, NavigationActions } from 'react-navigation';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,6 +30,10 @@ const styles = StyleSheet.create({
 });
 
 class HomeScreen extends Component {
+
+  componentDidMount(){
+  }
+
   render() {
     console.log(this.props.token);
     return (
