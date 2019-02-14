@@ -42,31 +42,21 @@ class Loading extends Component {
       console.log(tok);
       if (tok !== null && tok !== undefined && tok !== '') {
         this.props.setUserToken(tok);
-        return true;
+        this.props.navigation.dispatch(StackActions.reset({
+                                                          index: 0,
+                                                          actions: [
+                                                            NavigationActions.navigate({ routeName: 'Home'}),
+                                                            NavigationActions.navigate({ routeName: 'Details'})
+                                                          ]
+                                                        }));
       }else{
-        return false;
+        this.props.navigation.dispatch(StackActions.reset({index: 0,
+                                                          actions: [
+                                                            NavigationActions.navigate({ routeName: 'Login'})
+                                                          ]
+                                                        }));
       }
     });
-  }
-
-  componentDidUpdate(){
-    if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
-      this.props.navigation.navigate('Home');
-      this.props.navigation.dispatch(StackActions.reset({
-                                                        index: 0,
-                                                        actions: [
-                                                          NavigationActions.navigate({ routeName: 'Home'}),
-                                                          NavigationActions.navigate({ routeName: 'Details'})
-                                                        ]
-                                                      }));
-    }else{
-      this.props.navigation.navigate('Login');
-      this.props.navigation.dispatch(StackActions.reset({index: 0,
-                                                        actions: [
-                                                          NavigationActions.navigate({ routeName: 'Login'})
-                                                        ]
-                                                      }));
-    }
   }
 
   render() {
