@@ -39,7 +39,7 @@ class Loading extends Component {
   checkIfLoggedIn = () => {
     var cachedToken = AsyncStorage.getItem('userToken');
     cachedToken.then(tok => {
-      // console.log(tok);
+      console.log(tok);
       if (tok !== null && tok !== undefined && tok !== '') {
         this.props.setUserToken(tok);
         return true;

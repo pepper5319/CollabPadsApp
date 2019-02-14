@@ -64,9 +64,7 @@ export const performLogout = (url) => dispatch => {
     }
   })
   .then( () => {
-    localStorage.removeItem('token');
     dispatch({type: USER_LOGOUT_SUCCESS});
-    window.location.href = '/login';
   });
 }
 
