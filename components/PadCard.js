@@ -19,11 +19,9 @@ class PadCard extends Component {
         <Transition shared="bgImage">
           <Card.Cover style={{borderTopLeftRadius: 16, borderTopRightRadius: 16}} source={{ uri: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ' }} />
         </Transition>
-        <Card.Title
-          title={this.props.data.name}
-          subtitle={this.props.data.owner}
-          right={(props) => <IconButton {...props} icon="more-vert" onPress={() => {}} />}
-        />
+          <Card.Content>
+            <Title style={{paddingTop: 16}}>{this.props.data.name}</Title>
+          </Card.Content>
       </Card>
     );
   }

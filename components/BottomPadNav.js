@@ -33,7 +33,6 @@ class BottomNav extends Component {
         <Appbar style={styles.appbar}>
           <Appbar.Action icon="face" onPress={() => console.log('Pressed mail')} />
         </Appbar>
-        
           <FAB
             style={styles.fab}
             icon="add"
