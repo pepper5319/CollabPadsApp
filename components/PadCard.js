@@ -14,9 +14,10 @@ const styles = StyleSheet.create({
 
 class PadCard extends Component {
   render(){
+    const name = "bgImage" + this.props.data.static_id;
     return(
       <Card style={styles.card} onPress={this.props.navigate}>
-        <Transition shared="bgImage">
+        <Transition shared={name}>
           <Card.Cover style={{borderTopLeftRadius: 16, borderTopRightRadius: 16}} source={{ uri: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ' }} />
         </Transition>
           <Card.Content>

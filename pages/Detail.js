@@ -7,6 +7,11 @@ import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 
 import PadCard from '../components/PadCard.js';
 import BottomNav from '../components/BottomPadNav.js';
+import Item from '../components/Item.js';
+
+import { LISTS_URL, ITEMS_URL } from '../redux/listrUrls.js';
+import { fetchLists } from '../redux/actions/listActions.js';
+import { fetchItems } from '../redux/actions/itemActions.js';
 
 const styles = StyleSheet.create({
   container: {
@@ -32,7 +37,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   contentContainer: {
-    ...ifIphoneX({paddingTop: 40}, {paddingTop: 30})
+    ...ifIphoneX({paddingTop: 16})
   },
   bg__title:{
     fontSize: 30,
@@ -45,23 +50,50 @@ const styles = StyleSheet.create({
 });
 
 class HomeScreen extends Component {
-  render() {
+
+  constructor(){
+    super();
+    this.state = {
+      padID: null,
+      padName: null
+    }
+  }
+
+  componentWillMount(){
+
+  }
+  componentDidMount(){
     const { navigation } = this.props;
-    const padId = navigation.getParam('static_id', 'NO-ID');
-    const padName = navigation.getParam('name', 'NO PAD AVALIABLE');
+    this.setState({ padID: navigation.getParam('static_id', 'NO ID'),
+                    padName: navigation.getParam('name', 'NO PAD AVALIABLE')
+                  });
+    this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
+  }
+
+  render() {
+    var items = this.props.items.map((item) => (
+      <Item key={item.static_id} data={item} />
+    ));
+    const { navigation } = this.props;
+    const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
     return (
         <View style={styles.container}>
-          <Transition shared="bgImage" >
+          <Transition shared={name} >
             <FitImage
               source={{ uri: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ' }}
             >
             <Transition appear='scale'>
-              <Text style={styles.bg__title}>{padName}</Text>
+              <Text style={styles.bg__title}>{this.state.padName}</Text>
             </Transition>
           </FitImage>
           </Transition>
+
+            <Transition appear="right">
           <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
+            {items}
           </ScrollView>
+
+          </Transition>
           <BottomNav />
         </View>
     );
@@ -70,7 +102,8 @@ class HomeScreen extends Component {
 
 
 const mapStateToProps = state => ({
-
+  token: state.users.token,
+  items: state.items.items
 });
 
-export default connect(mapStateToProps, { })(HomeScreen);
+export default connect(mapStateToProps, { fetchItems })(HomeScreen);
