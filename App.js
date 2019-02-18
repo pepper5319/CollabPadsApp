@@ -10,7 +10,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
-import {createStackNavigator, createAppContainer} from "react-navigation";
+import {createStackNavigator, createAppContainer, createSwitchNavigator} from "react-navigation";
 import {Appbar} from 'react-native-paper';
 import HomeScreen from './pages/HomeScreen.js';
 import Detail from './pages/Detail.js';
@@ -20,19 +20,40 @@ import {AsyncStorage} from 'react-native';
 
 const styles = StyleSheet.create({});
 
-
-  const AppNavigator = createStackNavigator({
+  const MainStack = createStackNavigator(
+    {
       Home: HomeScreen,
       Details: Detail,
-      Login: Login,
-      Loading: Loading
     }, {
       headerMode: 'none',
       navigationOptions: {
         headerVisible: false
       },
+      initialRouteName: 'Home'
+    }
+  );
+
+  const AuthStack = createStackNavigator(
+    {
+      Login: Login
+    }, {
+      headerMode: 'none',
+      navigationOptions: {
+        headerVisible: false
+      },
+      initialRouteName: 'Login'
+    }
+  );
+
+  const AppNavigator = createSwitchNavigator(
+    {
+      Loading: Loading,
+      Auth: AuthStack,
+      App: MainStack
+    },{
       initialRouteName: 'Loading'
-    });
+    }
+  );
   const AppContainer = createAppContainer(AppNavigator);
 
 

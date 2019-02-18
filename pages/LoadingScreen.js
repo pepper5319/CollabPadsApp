@@ -29,11 +29,11 @@ class Loading extends Component {
 
   constructor(){
     super();
-
+    this.checkIfLoggedIn();
   }
 
   componentDidMount(){
-    this.checkIfLoggedIn();
+    // Remove the listener when you are done
   }
 
   checkIfLoggedIn = () => {
@@ -42,19 +42,9 @@ class Loading extends Component {
       console.log(tok);
       if (tok !== null && tok !== undefined && tok !== '') {
         this.props.setUserToken(tok);
-        this.props.navigation.dispatch(StackActions.reset({
-                                                          index: 0,
-                                                          actions: [
-                                                            NavigationActions.navigate({ routeName: 'Home'}),
-                                                            NavigationActions.navigate({ routeName: 'Details'})
-                                                          ]
-                                                        }));
+        this.props.navigation.navigate('App');
       }else{
-        this.props.navigation.dispatch(StackActions.reset({index: 0,
-                                                          actions: [
-                                                            NavigationActions.navigate({ routeName: 'Login'})
-                                                          ]
-                                                        }));
+        this.props.navigation.navigate('Auth');
       }
     });
   }
@@ -65,6 +55,7 @@ class Loading extends Component {
           <Text style={styles.welcome}>Loading</Text>
         </View>
     );
+    this.didBlurHome.remove();
   }
 }
 

@@ -31,10 +31,21 @@ const styles = StyleSheet.create({
 
 class HomeScreen extends Component {
 
-  componentDidMount(){
+  constructor(){
+    super();
+    this.didBlurSubscription = null;
   }
 
+  componentWillMount(){
+    
+
+  }
+
+  componentDidUpdate(){
+    this.didBlurSubscription.remove();
+  }
   render() {
+    // Remove the listener when you are done
     console.log(this.props.token);
     return (
         <View style={styles.container}>

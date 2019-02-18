@@ -54,13 +54,7 @@ class Login extends Component {
 
   componentDidUpdate(){
     if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
-      this.props.navigation.dispatch(StackActions.reset({
-                                                        index: 0,
-                                                        actions: [
-                                                          NavigationActions.navigate({ routeName: 'Home'}),
-                                                          NavigationActions.navigate({ routeName: 'Details'})
-                                                        ]
-                                                      }));
+      this.props.navigation.navigate('App');
     }
   }
 
