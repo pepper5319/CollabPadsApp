@@ -10,55 +10,74 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
-import {createStackNavigator, createAppContainer} from "react-navigation";
+import {createStackNavigator, createAppContainer, createSwitchNavigator} from "react-navigation";
 import {Appbar} from 'react-native-paper';
 import HomeScreen from './pages/HomeScreen.js';
 import Detail from './pages/Detail.js';
-import {performLogin, setUserToken} from './redux/actions/userActions.js';
+import Login from './pages/LoginScreen.js';
+import Loading from './pages/LoadingScreen.js';
 import {AsyncStorage} from 'react-native';
 
 const styles = StyleSheet.create({});
 
-const AppNavigator = createStackNavigator({
-  Home: HomeScreen,
-  Details: Detail
-}, {
-  headerMode: 'none',
-  navigationOptions: {
-    headerVisible: false
-  }
-});
-const AppContainer = createAppContainer(AppNavigator);
+  const MainStack = createStackNavigator(
+    {
+      Home: HomeScreen,
+      Details: Detail,
+    }, {
+      headerMode: 'none',
+      navigationOptions: {
+        headerVisible: false
+      },
+      initialRouteName: 'Home'
+    }
+  );
+
+  const AuthStack = createStackNavigator(
+    {
+      Login: Login
+    }, {
+      headerMode: 'none',
+      navigationOptions: {
+        headerVisible: false
+      },
+      initialRouteName: 'Login'
+    }
+  );
+
+  const AppNavigator = createSwitchNavigator(
+    {
+      Loading: Loading,
+      Auth: AuthStack,
+      App: MainStack
+    },{
+      initialRouteName: 'Loading'
+    }
+  );
+  const AppContainer = createAppContainer(AppNavigator);
+
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    this.checkIfLoggedIn = this.checkIfLoggedIn.bind(this);
+    this.state = {
+      initialScreen: 'Login'
+    }
+    this.appContainer = null
   }
 
   componentWillMount() {
-    this.checkIfLoggedIn();
   }
 
-  checkIfLoggedIn() {
-    var cachedToken = AsyncStorage.getItem('userToken');
-    cachedToken.then(tok => {
-      if (tok !== null && tok !== undefined) {
-        this.props.setUserToken(tok);
-        return true;
-      }
-    });
+  componentDidMount() {
   }
 
   render() {
-    console.log(this.props.token);
-    return (<View style={{
-        flex: 1
-      }}>
-      <AppContainer/>
-
-    </View>);
+    return (
+      <View style={{ flex: 1 }}>
+        <AppContainer />
+      </View>);
   }
 }
 
@@ -66,4 +85,4 @@ const mapStateToProps = state => ({
   token: state.users.token
 });
 
-export default connect(mapStateToProps, {setUserToken})(App);
+export default connect(mapStateToProps, {})(App);

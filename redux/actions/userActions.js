@@ -22,10 +22,13 @@ export const resetErrors = () => dispatch =>{
 }
 
 export const setUserToken = (token) => dispatch => {
-  dispatch({
-    type: USER_HAS_LOGIN,
-    payload: token
-  });
+  if(token !== null && token !== undefined){
+    dispatch({
+      type: USER_HAS_LOGIN,
+      payload: token
+    });
+  }
+
 }
 
 export const getUserData = (url, token) => dispatch => {
@@ -45,8 +48,7 @@ export const performLogin = (url, userData) => dispatch => {
   fetch(url, {
     method: 'POST',
     headers: {
-      'content-type': 'application/json',
-      'X-CSRFToken': csrftoken
+      'content-type': 'application/json'
     },
     body: JSON.stringify(userData)
   })
@@ -62,9 +64,7 @@ export const performLogout = (url) => dispatch => {
     }
   })
   .then( () => {
-    localStorage.removeItem('token');
     dispatch({type: USER_LOGOUT_SUCCESS});
-    window.location.href = '/login';
   });
 }
 

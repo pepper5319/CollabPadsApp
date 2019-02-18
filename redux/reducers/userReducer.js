@@ -9,6 +9,14 @@ _storeData = async (key, value) => {
   }
 };
 
+_removeData = async (key) => {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (error) {
+    // Error retrieving data
+  }
+};
+
 export default function userReducer(state = {token: null, loading: false, username: null, error: null}, action){
     switch (action.type) {
       case USER_RESET_ERRORS:
@@ -33,9 +41,10 @@ export default function userReducer(state = {token: null, loading: false, userna
           _storeData('userToken', action.payload.key);
           return {
             loading: false,
-            token: action.token
+            token: action.payload.key
           }
         }else{
+          console.log(action.payload);
           if(action.payload.username){
             return {
               token: null,
@@ -74,6 +83,7 @@ export default function userReducer(state = {token: null, loading: false, userna
           alert("Something went wrong. Please try again.")
         }
       case USER_LOGOUT_SUCCESS:
+        _removeData('userToken');
         return {
           loading: false,
           token: null
