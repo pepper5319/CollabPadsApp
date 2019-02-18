@@ -4,6 +4,7 @@ import { FAB, Card, Appbar } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
+import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 
 import PadCard from '../components/PadCard.js';
 import BottomNav from '../components/BottomNav.js';
@@ -70,7 +71,7 @@ class HomeScreen extends Component {
     };
 
     var pads = this.props.data.map((pad) => (
-        <PadCard key={pad.static_id} data={pad} navigate={() => this.props.navigation.navigate('Details')} />
+        <PadCard key={pad.static_id} data={pad} navigate={() => this.props.navigation.navigate('Details', pad)} />
       ));
     return (
         <View style={styles.container}>

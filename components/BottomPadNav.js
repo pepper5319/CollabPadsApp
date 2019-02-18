@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import { Appbar } from 'react-native-paper';
 import { FAB, BottomNavigation } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
-import { LOGOUT_URL } from '../redux/listrUrls.js';
-import {performLogin, performLogout} from '../redux/actions/userActions.js';
+import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 
 const styles = StyleSheet.create({
   appbar: {
@@ -32,12 +31,12 @@ class BottomNav extends Component {
     return (
       <View>
         <Appbar style={styles.appbar}>
-          <Appbar.Action icon="more-vert" onPress={() => this.props.performLogout(LOGOUT_URL)} />
           <Appbar.Action icon="face" onPress={() => console.log('Pressed mail')} />
         </Appbar>
+        
           <FAB
             style={styles.fab}
-            icon="create"
+            icon="add"
             onPress={() => console.log('Pressed')}
           />
       </View>
@@ -48,4 +47,4 @@ const mapStateToProps = state => ({
   token: state.users.token
 });
 
-export default connect(mapStateToProps, { performLogout })(BottomNav);
+export default connect(mapStateToProps, { })(BottomNav);
