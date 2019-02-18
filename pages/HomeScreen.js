@@ -19,6 +19,11 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
   },
+  no__pads: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   bottom__bar: {
     flexGrow: 1,
     position: 'absolute',
@@ -70,11 +75,12 @@ class HomeScreen extends Component {
     return (
         <View style={styles.container}>
           <Animated.View style={containerStyle}>
-          <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
+          {pads.length > 0 && <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
             <View>
               {pads}
             </View>
-          </ScrollView>
+          </ScrollView>}
+          {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
           <BottomNav/>
           </Animated.View>
         </View>
