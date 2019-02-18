@@ -52,7 +52,7 @@ class Loading extends Component {
   render() {
     return (
         <View style={styles.container}>
-          <Text style={styles.welcome}>Loading</Text>
+          <Text style={styles.welcome}></Text>
         </View>
     );
     this.didBlurHome.remove();

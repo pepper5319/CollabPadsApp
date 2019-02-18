@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, ScrollView} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated} from 'react-native';
 import { connect } from 'react-redux';
 import PadCard from '../components/PadCard.js';
 import BottomNav from '../components/BottomNav.js';
@@ -33,22 +33,30 @@ class HomeScreen extends Component {
 
   constructor(){
     super();
-    this.didBlurSubscription = null;
+    this._visibility = new Animated.Value(0);
   }
 
   componentWillMount(){
-    
-
+    Animated.timing(this._visibility, {
+      toValue: 1,
+      duration: 300,
+    }).start();
   }
 
   componentDidUpdate(){
-    this.didBlurSubscription.remove();
   }
   render() {
     // Remove the listener when you are done
-    console.log(this.props.token);
+    const containerStyle = {
+      flex: 1,
+      opacity: this._visibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      })
+    };
     return (
         <View style={styles.container}>
+          <Animated.View style={containerStyle}>
           <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
             <View>
               <PadCard data={{static_id: '123456', name: 'My Pad'}} navigate={() => this.props.navigation.navigate('Details')}/>
@@ -58,6 +66,7 @@ class HomeScreen extends Component {
             </View>
           </ScrollView>
           <BottomNav/>
+          </Animated.View>
         </View>
     );
   }

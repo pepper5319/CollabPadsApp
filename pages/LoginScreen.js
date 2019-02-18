@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ScrollView} from 'react-native';
+import {Platform, StyleSheet, Text, View, ScrollView, Animated} from 'react-native';
 import { LOGIN_URL } from '../redux/listrUrls.js';
 import { connect } from 'react-redux';
 import { FAB, Card, Appbar, TextInput, Button, } from 'react-native-paper';
@@ -39,6 +39,7 @@ class Login extends Component {
       username: '',
       password: ''
     }
+    this._visibility = new Animated.Value(0);
   }
 
   userLogin = () => {
@@ -52,6 +53,13 @@ class Login extends Component {
     }
   }
 
+  componentWillMount(){
+    Animated.timing(this._visibility, {
+      toValue: 1,
+      duration: 300,
+    }).start();
+  }
+
   componentDidUpdate(){
     if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
       this.props.navigation.navigate('App');
@@ -59,8 +67,16 @@ class Login extends Component {
   }
 
   render() {
+    const containerStyle = {
+      flex: 1,
+      opacity: this._visibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      })
+    };
     return (
         <View style={styles.container}>
+          <Animated.View style={containerStyle}>
           <View style={styles.header}>
               <Text style={{fontSize: 20}}>{this.props.token}</Text>
           </View>
@@ -86,6 +102,7 @@ class Login extends Component {
               Login
             </Button>
           </View>
+        </Animated.View>
         </View>
     );
   }
