@@ -41,7 +41,7 @@ export default function userReducer(state = {token: null, loading: false, userna
           _storeData('userToken', action.payload.key);
           return {
             loading: false,
-            token: action.token
+            token: action.payload.key
           }
         }else{
           console.log(action.payload);

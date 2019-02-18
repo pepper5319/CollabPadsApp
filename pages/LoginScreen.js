@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { FAB, Card, Appbar, TextInput, Button, } from 'react-native-paper';
 import {performLogin} from '../redux/actions/userActions.js';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
+import { StackActions, NavigationActions } from 'react-navigation';
 
 const styles = StyleSheet.create({
   container: {
@@ -47,6 +48,19 @@ class Login extends Component {
         password: this.state.password
       }
       this.props.performLogin(LOGIN_URL, userData);
+
+    }
+  }
+
+  componentDidUpdate(){
+    if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
+      this.props.navigation.dispatch(StackActions.reset({
+                                                        index: 0,
+                                                        actions: [
+                                                          NavigationActions.navigate({ routeName: 'Home'}),
+                                                          NavigationActions.navigate({ routeName: 'Details'})
+                                                        ]
+                                                      }));
     }
   }
 
