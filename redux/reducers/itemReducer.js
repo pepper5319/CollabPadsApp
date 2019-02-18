@@ -9,6 +9,7 @@ export default function itemReducer(state = {items: [], showModal: false, loadin
           showModal: false,
         }
       case FETCH_ITEMS_SUCCESS:
+        console.log(action.payload);
         return {
           loading: false,
           items: action.payload,

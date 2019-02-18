@@ -17,10 +17,11 @@ import Detail from './pages/Detail.js';
 import Login from './pages/LoginScreen.js';
 import Loading from './pages/LoadingScreen.js';
 import {AsyncStorage} from 'react-native';
+import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 
 const styles = StyleSheet.create({});
 
-  const MainStack = createStackNavigator(
+  const MainStack = FluidNavigator(
     {
       Home: HomeScreen,
       Details: Detail,
@@ -29,7 +30,9 @@ const styles = StyleSheet.create({});
       navigationOptions: {
         headerVisible: false
       },
-      initialRouteName: 'Home'
+      initialRouteName: 'Home',
+      gesturesEnabled: true,
+      mode: 'card'
     }
   );
 

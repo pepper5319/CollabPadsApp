@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated} from 'react-native';
-import { connect } from 'react-redux';
-import PadCard from '../components/PadCard.js';
-import BottomNav from '../components/BottomNav.js';
 import { FAB, Card, Appbar } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
+import { connect } from 'react-redux';
+import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
+
+import PadCard from '../components/PadCard.js';
+import BottomNav from '../components/BottomNav.js';
+
+import { LISTS_URL } from '../redux/listrUrls.js';
+import { fetchLists } from '../redux/actions/listActions.js';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,6 +19,11 @@ const styles = StyleSheet.create({
   },
   main: {
     flex: 1,
+  },
+  no__pads: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   bottom__bar: {
     flexGrow: 1,
@@ -43,8 +53,13 @@ class HomeScreen extends Component {
     }).start();
   }
 
-  componentDidUpdate(){
+  componentDidMount(){
+    if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
+      this.props.fetchLists(LISTS_URL, this.props.token);
+
+    }
   }
+
   render() {
     // Remove the listener when you are done
     const containerStyle = {
@@ -54,17 +69,19 @@ class HomeScreen extends Component {
         outputRange: [0, 1],
       })
     };
+
+    var pads = this.props.data.map((pad) => (
+        <PadCard key={pad.static_id} data={pad} navigate={() => this.props.navigation.navigate('Details', pad)} />
+      ));
     return (
         <View style={styles.container}>
           <Animated.View style={containerStyle}>
-          <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
+          {pads.length > 0 && <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
             <View>
-              <PadCard data={{static_id: '123456', name: 'My Pad'}} navigate={() => this.props.navigation.navigate('Details')}/>
-              <PadCard data={{static_id: '123456', name: 'My Pad 2'}} navigate={() => this.props.navigation.navigate('Details')} />
-              <PadCard data={{static_id: '123456', name: 'My Pad 3'}} navigate={() => this.props.navigation.navigate('Details')} />
-              <PadCard data={{static_id: '123456', name: 'My Pad 4'}} navigate={() => this.props.navigation.navigate('Details')} />
+              {pads}
             </View>
-          </ScrollView>
+          </ScrollView>}
+          {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
           <BottomNav/>
           </Animated.View>
         </View>
@@ -74,7 +91,8 @@ class HomeScreen extends Component {
 
 
 const mapStateToProps = state => ({
-
+  token: state.users.token,
+  data: state.lists.data
 });
 
-export default connect(mapStateToProps, { })(HomeScreen);
+export default connect(mapStateToProps, { fetchLists })(HomeScreen);

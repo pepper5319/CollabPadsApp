@@ -1,6 +1,5 @@
 import { FETCH_ITEMS, FETCH_ITEMS_SUCCESS, DISMISS_ITEMS } from './types';
 import { ITEMS_URL } from '../listrUrls';
-import Cookies from 'js-cookie';
 
 export const fetchItems = (url, listID, token) => dispatch =>{
     dispatch({type: FETCH_ITEMS});
@@ -21,7 +20,6 @@ export const fetchItems = (url, listID, token) => dispatch =>{
 }
 
 export const performItemPost = (url, itemData, listID, token) => dispatch => {
-  var csrftoken = Cookies.get('csrftoken');
   fetch(url, {
     method: 'POST',
     headers: {
@@ -29,7 +27,6 @@ export const performItemPost = (url, itemData, listID, token) => dispatch => {
       'Authorization': 'Token ' + token,
       'LIST-ID': listID,
       'GUEST': 'False',
-      'X-CSRFToken': csrftoken
     },
     body: JSON.stringify(itemData)
   })
@@ -43,7 +40,6 @@ export const performItemPost = (url, itemData, listID, token) => dispatch => {
 }
 
 export const deleteItem = (url, itemID, listID, token) => dispatch => {
-  var csrftoken = Cookies.get('csrftoken');
   fetch(url+itemID+'/', {
     method: 'DELETE',
     headers: {
@@ -62,7 +58,6 @@ export const deleteItem = (url, itemID, listID, token) => dispatch => {
 }
 
 export const likeItem = (url, itemData, listID, token) => dispatch => {
-  var csrftoken = Cookies.get('csrftoken');
   fetch(url+itemData.static_id+'/', {
     method: 'PUT',
     headers: {
