@@ -47,27 +47,6 @@ class Item extends Component {
 
   }
 
-  componentDidUpdate(){
-    fetch(USER_URL, {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'Authorization': 'Token ' + this.props.token,
-      },
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data.username){
-        var index = this.props.data.liked_users.indexOf(data.username);
-        if (index > -1) {
-          this.setState({ isLiked: true });
-        }else{
-          this.setState({ isLiked: false });
-        }
-      }
-    });
-  }
-
   componentWillDismount(){
   }
 

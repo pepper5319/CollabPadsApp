@@ -92,7 +92,7 @@ class NewItemCard extends Component {
       <Card style={[styles.card, cardStyle]}>
         <Card.Content>
           <TextInput
-            style={{marginBottom: 10}}
+            style={{marginBottom: 10, backgroundColor: 'white'}}
             label='Item Name'
             value={this.state.itemName}
             onChangeText={itemName => this.setState({ itemName })}
@@ -109,6 +109,7 @@ class NewItemCard extends Component {
             multiline
             returnKeyType='done'
             blurOnSubmit={true}
+            style={{backgroundColor: 'white'}}
           />
         </Card.Content>
         <Card.Actions>
