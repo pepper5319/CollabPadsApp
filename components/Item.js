@@ -20,7 +20,6 @@ class Item extends Component {
 
   constructor(){
     super();
-    this._visibility = new Animated.Value(0);
     this.state = {
       isLiked: false
     }
@@ -45,17 +44,31 @@ class Item extends Component {
         }
       }
     });
-    Animated.timing(this._visibility, {
-      toValue: 1,
-      duration: 300,
-    }).start();
+
+  }
+
+  componentDidUpdate(){
+    fetch(USER_URL, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': 'Token ' + this.props.token,
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.username){
+        var index = this.props.data.liked_users.indexOf(data.username);
+        if (index > -1) {
+          this.setState({ isLiked: true });
+        }else{
+          this.setState({ isLiked: false });
+        }
+      }
+    });
   }
 
   componentWillDismount(){
-    Animated.timing(this._visibility, {
-      toValue: 0,
-      duration: 300
-    }).start()
   }
 
   _onLike = (itemData, listID) => {
@@ -83,19 +96,8 @@ class Item extends Component {
   }
 
   render(){
-    const containerStyle = {
-      opacity: this._visibility.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      }),
-      scale: this._visibility.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      }),
-    };
     var chipColor = (this.state.isLiked) ? {backgroundColor: '#43a048', textColor: 'white'} : {};
     return(
-      <Animated.View style={containerStyle}>
         <Card style={styles.card}>
           <Card.Content>
             <Title style={{paddingTop: 16}}>{this.props.data.name}</Title>
@@ -106,7 +108,6 @@ class Item extends Component {
             <Button onPress={(e) => this.props.onRemove(e, this.props.data.static_id, this.props.listID)}>Remove</Button>
           </Card.Actions>
         </Card>
-      </Animated.View>
     );
   }
 }

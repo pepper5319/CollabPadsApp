@@ -132,10 +132,14 @@ class HomeScreen extends Component {
       itemDesc: '',
       refreshing: false
     }
+    this._visibility = new Animated.Value(0);
   }
 
   componentWillMount(){
-
+    Animated.timing(this._visibility, {
+      toValue: 1,
+      duration: 300,
+    }).start();
   }
   componentDidMount(){
     const { navigation } = this.props;
@@ -143,6 +147,8 @@ class HomeScreen extends Component {
                     padName: navigation.getParam('name', 'NO PAD AVALIABLE')
                   });
     this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
+
+
   }
 
   makeid() {
@@ -198,6 +204,17 @@ class HomeScreen extends Component {
     const { navigation } = this.props;
     const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
 
+    const containerStyle = {
+      opacity: this._visibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }),
+      scale: this._visibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }),
+    };
+
     var newCard = ((this.state.newItemCardVisible) ? <NewItemCard performItemPost={this._performItemPost} toggleNewItemCard={this._toggleNewItemCard}/> : null)
     return (
         <View style={styles.container}>
@@ -209,15 +226,18 @@ class HomeScreen extends Component {
               <Text style={styles.bg__title}>{this.state.padName}</Text>
             </Animated.View>
           </FitImage>
-          <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer} refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh}
-              />
-            }>
-            {newCard}
-            {items}
-          </ScrollView>
+
+          <Animated.View style={[styles.main, containerStyle]}>
+            <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer} refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh}
+                />
+              }>
+              {newCard}
+              {items}
+            </ScrollView>
+          </Animated.View>
           <BottomPadNav onFABPress={this._toggleNewItemCard}/>
         </View>
     );
