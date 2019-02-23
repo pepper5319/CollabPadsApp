@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, ScrollView, Image} from 'react-native';
+import {Platform, StyleSheet, Text, View, ScrollView, Image, Animated, KeyboardAvoidingView} from 'react-native';
 import { connect } from 'react-redux';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import FitImage from 'react-native-fit-image';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
+import { Card, Title, Paragraph, Button, TextInput } from 'react-native-paper'
 
 import PadCard from '../components/PadCard.js';
-import BottomNav from '../components/BottomPadNav.js';
+import BottomPadNav from '../components/BottomPadNav.js';
 import Item from '../components/Item.js';
 
 import { LISTS_URL, ITEMS_URL } from '../redux/listrUrls.js';
@@ -46,8 +47,71 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 1)',
     textShadowOffset: {width: -2, height: 2},
     textShadowRadius: 10
+  },
+  card:{
+    marginTop: 16,
+    marginLeft: 16,
+    marginRight: 16,
+    borderRadius: 16
   }
 });
+
+class NewItemCard extends Component{
+
+  constructor(){
+    super();
+    this._visibility = new Animated.Value(0);
+    this.state = {
+      itemName: '',
+      itemDesc: ''
+    }
+  }
+
+  componentWillMount(){
+    Animated.timing(this._visibility, {
+      toValue: 1,
+      duration: 300,
+    }).start();
+  }
+
+  render(){
+    const cardStyle = {
+      opacity: this._visibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      })
+    };
+    return(
+      <Card style={[styles.card, cardStyle]}>
+        <Card.Content>
+          <TextInput
+            style={{marginBottom: 10}}
+            label='Item Name'
+            value={this.state.itemName}
+            onChangeText={itemName => this.setState({ itemName })}
+            mode='outlined'
+            autoFocus={true}
+            onSubmitEditing={() => { this.secondTextInput.focus(); }}
+          />
+          <TextInput
+            ref={(input) => { this.secondTextInput = input; }}
+            label='Item Description (Optional)'
+            value={this.state.itemDesc}
+            onChangeText={itemDesc => this.setState({ itemDesc })}
+            mode='outlined'
+            multiline
+            returnKeyType='done'
+            blurOnSubmit={true}
+          />
+        </Card.Content>
+        <Card.Actions>
+          <Button onPress={() => console.log("CANCELLED ITEM")}>Cancel</Button>
+          <Button onPress={() => console.log("ADDED ITEM")}>Add</Button>
+        </Card.Actions>
+      </Card>
+    );
+  }
+}
 
 class HomeScreen extends Component {
 
@@ -55,7 +119,8 @@ class HomeScreen extends Component {
     super();
     this.state = {
       padID: null,
-      padName: null
+      padName: null,
+      newItemCardVisible: false,
     }
   }
 
@@ -70,12 +135,17 @@ class HomeScreen extends Component {
     this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
   }
 
+  _toggleNewItemCard = () => {
+    this.setState({ newItemCardVisible: !this.state.newItemCardVisible});
+  }
+
   render() {
     var items = this.props.items.map((item) => (
       <Item key={item.static_id} data={item} />
     ));
     const { navigation } = this.props;
     const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
+    var newCard = ((this.state.newItemCardVisible) ? <NewItemCard /> : null)
     return (
         <View style={styles.container}>
           <Transition shared={name} >
@@ -87,14 +157,13 @@ class HomeScreen extends Component {
             </Transition>
           </FitImage>
           </Transition>
-
-            <Transition appear="right">
+          {newCard}
+          <Transition appear="right">
           <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
             {items}
           </ScrollView>
-
           </Transition>
-          <BottomNav />
+          <BottomPadNav onFABPress={this._toggleNewItemCard}/>
         </View>
     );
   }
