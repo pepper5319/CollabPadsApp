@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ScrollView, Image, Animated, KeyboardAvoidingView, Keyboard} from 'react-native';
+import {Platform, StyleSheet, Text, View, ScrollView, Image, Animated, KeyboardAvoidingView, Keyboard, RefreshControl} from 'react-native';
 import { connect } from 'react-redux';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import FitImage from 'react-native-fit-image';
@@ -129,7 +129,8 @@ class HomeScreen extends Component {
       padName: null,
       newItemCardVisible: false,
       itemName: '',
-      itemDesc: ''
+      itemDesc: '',
+      refreshing: false
     }
   }
 
@@ -184,6 +185,12 @@ class HomeScreen extends Component {
     }
   }
 
+  _onRefresh = () => {
+    this.setState({refreshing: true});
+    this.props.fetchItems(ITEMS_URL, this.state.padID, this.props.token);
+    this.setState({refreshing: this.props.loading});
+  }
+
   render() {
     var items = this.props.items.map((item) => (
       <Item key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem}/>
@@ -202,7 +209,12 @@ class HomeScreen extends Component {
               <Text style={styles.bg__title}>{this.state.padName}</Text>
             </Animated.View>
           </FitImage>
-          <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
+          <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer} refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
             {newCard}
             {items}
           </ScrollView>
@@ -215,7 +227,8 @@ class HomeScreen extends Component {
 
 const mapStateToProps = state => ({
   token: state.users.token,
-  items: state.items.items
+  items: state.items.items,
+  loading: state.items.loading
 });
 
 export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem })(HomeScreen);
