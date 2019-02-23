@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   image: {
-    flex: 1
+    ...ifIphoneX({}, {maxHeight: 200})
   },
   item__container: {
     flex: 5
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   contentContainer: {
-    ...ifIphoneX({paddingTop: 16})
+    ...ifIphoneX({paddingTop: 16}, {paddingTop: 16})
   },
   bg__title:{
     fontSize: 30,
@@ -49,12 +49,68 @@ const styles = StyleSheet.create({
     textShadowRadius: 10
   },
   card:{
-    marginTop: 16,
+    marginBottom: 16,
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 16
   }
 });
+
+class NewItemCard extends Component {
+  constructor() {
+    super();
+    this.state={
+      itemName: '',
+      itemDesc: ''
+    }
+    this._newCardVisibility = new Animated.Value(0);
+  }
+  componentWillMount(){
+    Animated.timing(this._newCardVisibility, {
+      toValue: 1,
+      duration: 300
+    }).start()
+  }
+  render(){
+
+    const cardStyle = {
+      opacity: this._newCardVisibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      })
+    };
+
+    return(
+      <Card style={[styles.card, cardStyle]}>
+        <Card.Content>
+          <TextInput
+            style={{marginBottom: 10}}
+            label='Item Name'
+            value={this.state.itemName}
+            onChangeText={itemName => this.setState({ itemName })}
+            mode='outlined'
+            autoFocus={true}
+            onSubmitEditing={() => { this.secondTextInput.focus(); }}
+          />
+          <TextInput
+            ref={(input) => { this.secondTextInput = input; }}
+            label='Item Description (Optional)'
+            value={this.state.itemDesc}
+            onChangeText={itemDesc => this.setState({ itemDesc })}
+            mode='outlined'
+            multiline
+            returnKeyType='done'
+            blurOnSubmit={true}
+          />
+        </Card.Content>
+        <Card.Actions>
+          <Button onPress={this.props.toggleNewItemCard}>Cancel</Button>
+          <Button onPress={() => this.props.performItemPost(this.state.itemName, this.state.itemDesc)}>Add</Button>
+        </Card.Actions>
+      </Card>
+    );
+  }
+}
 
 class HomeScreen extends Component {
 
@@ -63,11 +119,8 @@ class HomeScreen extends Component {
     this.state = {
       padID: null,
       padName: null,
-      newItemCardVisible: false,
-      itemName: '',
-      itemDesc: ''
+      newItemCardVisible: false
     }
-    this._newCardVisibility = new Animated.Value(0);
   }
 
   componentWillMount(){
@@ -89,18 +142,14 @@ class HomeScreen extends Component {
     return text;
   }
 
-  _performItemPost = () => {
-    if(this.state.itemName !== ''){
+  _performItemPost = (itemName, itemDesc) => {
+    if(itemName !== ''){
       const data = {
-        "name": this.state.itemName, "static_id": this.makeid()}
-      if(this.state.itemDesc !== '') {
-        data.description = this.state.itemDesc
+        "name": itemName, "static_id": this.makeid()}
+      if(itemDesc !== '') {
+        data.description = itemDesc
       }
       this.props.performItemPost(ITEMS_URL, data, this.state.padID, this.props.token);
-      Animated.timing(this._newCardVisibility, {
-        toValue: 0,
-        duration: 300,
-      }).start();
       Keyboard.dismiss();
       this.setState({ newItemCardVisible: !this.state.newItemCardVisible,
                       itemName: '',
@@ -117,20 +166,14 @@ class HomeScreen extends Component {
 
   _toggleNewItemCard = () => {
     if(this.state.newItemCardVisible === true){
-      Animated.timing(this._newCardVisibility, {
-        toValue: 0,
-        duration: 300,
-      }).start();
-      Keyboard.dismiss();
+      this.setState({ newItemCardVisible: !this.state.newItemCardVisible,
+                      itemName: '',
+                      itemDesc: ''});
     }else{
-      Animated.timing(this._newCardVisibility, {
-        toValue: 1,
-        duration: 300,
-      }).start();
+      this.setState({ newItemCardVisible: !this.state.newItemCardVisible,
+                      itemName: '',
+                      itemDesc: ''});
     }
-    this.setState({ newItemCardVisible: !this.state.newItemCardVisible,
-                    itemName: '',
-                    itemDesc: ''});
   }
 
   render() {
@@ -139,57 +182,22 @@ class HomeScreen extends Component {
     ));
     const { navigation } = this.props;
     const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
-    const cardStyle = {
-      opacity: this._newCardVisibility.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      })
-    };
-    var newCard = ((this.state.newItemCardVisible) ?
-    <Card style={[styles.card, cardStyle]}>
-      <Card.Content>
-        <TextInput
-          style={{marginBottom: 10}}
-          label='Item Name'
-          value={this.state.itemName}
-          onChangeText={itemName => this.setState({ itemName })}
-          mode='outlined'
-          autoFocus={true}
-          onSubmitEditing={() => { this.secondTextInput.focus(); }}
-        />
-        <TextInput
-          ref={(input) => { this.secondTextInput = input; }}
-          label='Item Description (Optional)'
-          value={this.state.itemDesc}
-          onChangeText={itemDesc => this.setState({ itemDesc })}
-          mode='outlined'
-          multiline
-          returnKeyType='done'
-          blurOnSubmit={true}
-        />
-      </Card.Content>
-      <Card.Actions>
-        <Button onPress={this._toggleNewItemCard}>Cancel</Button>
-        <Button onPress={this._performItemPost}>Add</Button>
-      </Card.Actions>
-    </Card> : null)
+
+    var newCard = ((this.state.newItemCardVisible) ? <NewItemCard performItemPost={this._performItemPost} toggleNewItemCard={this._toggleNewItemCard}/> : null)
     return (
         <View style={styles.container}>
-          <Transition shared={name} >
             <FitImage
+              style={styles.image}
               source={{ uri: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ' }}
             >
-            <Transition appear='scale'>
+            <Animated.View>
               <Text style={styles.bg__title}>{this.state.padName}</Text>
-            </Transition>
+            </Animated.View>
           </FitImage>
-          </Transition>
-          {newCard}
-          <Transition appear="right">
           <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
+            {newCard}
             {items}
           </ScrollView>
-          </Transition>
           <BottomPadNav onFABPress={this._toggleNewItemCard}/>
         </View>
     );
