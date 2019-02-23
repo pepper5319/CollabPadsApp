@@ -26,6 +26,13 @@ class Item extends Component {
     }).start();
   }
 
+  componentWillDismount(){
+    Animated.timing(this._visibility, {
+      toValue: 0,
+      duration: 300
+    }).start()
+  }
+
   render(){
     const containerStyle = {
       opacity: this._visibility.interpolate({

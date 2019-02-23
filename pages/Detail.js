@@ -60,8 +60,8 @@ class NewItemCard extends Component {
   constructor() {
     super();
     this.state={
-      itemName: '',
-      itemDesc: ''
+      itemDesc: '',
+      itemName: ''
     }
     this._newCardVisibility = new Animated.Value(0);
   }
@@ -71,6 +71,14 @@ class NewItemCard extends Component {
       duration: 300
     }).start()
   }
+
+  componentWillDismount(){
+    Animated.timing(this._newCardVisibility, {
+      toValue: 0,
+      duration: 300
+    }).start()
+  }
+
   render(){
 
     const cardStyle = {
@@ -119,7 +127,9 @@ class HomeScreen extends Component {
     this.state = {
       padID: null,
       padName: null,
-      newItemCardVisible: false
+      newItemCardVisible: false,
+      itemName: '',
+      itemDesc: ''
     }
   }
 
@@ -166,9 +176,7 @@ class HomeScreen extends Component {
 
   _toggleNewItemCard = () => {
     if(this.state.newItemCardVisible === true){
-      this.setState({ newItemCardVisible: !this.state.newItemCardVisible,
-                      itemName: '',
-                      itemDesc: ''});
+      this.setState({ newItemCardVisible: !this.state.newItemCardVisible});
     }else{
       this.setState({ newItemCardVisible: !this.state.newItemCardVisible,
                       itemName: '',
