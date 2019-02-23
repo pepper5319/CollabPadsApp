@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl} from 'react-native';
 import { FAB, Card, Appbar } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -43,6 +43,9 @@ class HomeScreen extends Component {
 
   constructor(){
     super();
+    this.state = {
+      refreshing: false
+    }
     this._visibility = new Animated.Value(0);
   }
 
@@ -56,8 +59,13 @@ class HomeScreen extends Component {
   componentDidMount(){
     if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
       this.props.fetchLists(LISTS_URL, this.props.token);
-
     }
+  }
+
+  _onRefresh = () => {
+    this.setState({refreshing: true});
+    this.props.fetchLists(LISTS_URL, this.props.token);
+    this.setState({refreshing: this.props.loading});
   }
 
   render() {
@@ -76,7 +84,13 @@ class HomeScreen extends Component {
     return (
         <View style={styles.container}>
           <Animated.View style={containerStyle}>
-          {pads.length > 0 && <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}>
+          {pads.length > 0 && <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
+              refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
             <View>
               {pads}
             </View>
@@ -92,7 +106,8 @@ class HomeScreen extends Component {
 
 const mapStateToProps = state => ({
   token: state.users.token,
-  data: state.lists.data
+  data: state.lists.data,
+  loading: state.lists.loading
 });
 
 export default connect(mapStateToProps, { fetchLists })(HomeScreen);
