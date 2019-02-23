@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ScrollView, Image, Animated, KeyboardAvoidingView} from 'react-native';
+import {Platform, StyleSheet, Text, View, ScrollView, Image, Animated, KeyboardAvoidingView, Keyboard} from 'react-native';
 import { connect } from 'react-redux';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import FitImage from 'react-native-fit-image';
@@ -12,7 +12,7 @@ import Item from '../components/Item.js';
 
 import { LISTS_URL, ITEMS_URL } from '../redux/listrUrls.js';
 import { fetchLists } from '../redux/actions/listActions.js';
-import { fetchItems } from '../redux/actions/itemActions.js';
+import { fetchItems, performItemPost } from '../redux/actions/itemActions.js';
 
 const styles = StyleSheet.create({
   container: {
@@ -56,63 +56,6 @@ const styles = StyleSheet.create({
   }
 });
 
-class NewItemCard extends Component{
-
-  constructor(){
-    super();
-    this._visibility = new Animated.Value(0);
-    this.state = {
-      itemName: '',
-      itemDesc: ''
-    }
-  }
-
-  componentWillMount(){
-    Animated.timing(this._visibility, {
-      toValue: 1,
-      duration: 300,
-    }).start();
-  }
-
-  render(){
-    const cardStyle = {
-      opacity: this._visibility.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      })
-    };
-    return(
-      <Card style={[styles.card, cardStyle]}>
-        <Card.Content>
-          <TextInput
-            style={{marginBottom: 10}}
-            label='Item Name'
-            value={this.state.itemName}
-            onChangeText={itemName => this.setState({ itemName })}
-            mode='outlined'
-            autoFocus={true}
-            onSubmitEditing={() => { this.secondTextInput.focus(); }}
-          />
-          <TextInput
-            ref={(input) => { this.secondTextInput = input; }}
-            label='Item Description (Optional)'
-            value={this.state.itemDesc}
-            onChangeText={itemDesc => this.setState({ itemDesc })}
-            mode='outlined'
-            multiline
-            returnKeyType='done'
-            blurOnSubmit={true}
-          />
-        </Card.Content>
-        <Card.Actions>
-          <Button onPress={() => console.log("CANCELLED ITEM")}>Cancel</Button>
-          <Button onPress={() => console.log("ADDED ITEM")}>Add</Button>
-        </Card.Actions>
-      </Card>
-    );
-  }
-}
-
 class HomeScreen extends Component {
 
   constructor(){
@@ -121,7 +64,10 @@ class HomeScreen extends Component {
       padID: null,
       padName: null,
       newItemCardVisible: false,
+      itemName: '',
+      itemDesc: ''
     }
+    this._newCardVisibility = new Animated.Value(0);
   }
 
   componentWillMount(){
@@ -135,8 +81,51 @@ class HomeScreen extends Component {
     this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
   }
 
+  makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 8; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+  }
+
+  _performItemPost = () => {
+    if(this.state.itemName !== ''){
+      const data = {
+        "name": this.state.itemName, "static_id": this.makeid()}
+      if(this.state.itemDesc !== '') {
+        data.description = this.state.itemDesc
+      }
+      this.props.performItemPost(ITEMS_URL, data, this.state.padID, this.props.token);
+      Animated.timing(this._newCardVisibility, {
+        toValue: 0,
+        duration: 300,
+      }).start();
+      Keyboard.dismiss();
+      this.setState({ newItemCardVisible: !this.state.newItemCardVisible,
+                      itemName: '',
+                      itemDesc: ''});
+    }else{
+      console.log("NAME EMPTY");
+    }
+  }
+
   _toggleNewItemCard = () => {
-    this.setState({ newItemCardVisible: !this.state.newItemCardVisible});
+    if(this.state.newItemCardVisible === true){
+      Animated.timing(this._newCardVisibility, {
+        toValue: 0,
+        duration: 300,
+      }).start();
+      Keyboard.dismiss();
+    }else{
+      Animated.timing(this._newCardVisibility, {
+        toValue: 1,
+        duration: 300,
+      }).start();
+    }
+    this.setState({ newItemCardVisible: !this.state.newItemCardVisible,
+                    itemName: '',
+                    itemDesc: ''});
   }
 
   render() {
@@ -145,7 +134,40 @@ class HomeScreen extends Component {
     ));
     const { navigation } = this.props;
     const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
-    var newCard = ((this.state.newItemCardVisible) ? <NewItemCard /> : null)
+    const cardStyle = {
+      opacity: this._newCardVisibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      })
+    };
+    var newCard = ((this.state.newItemCardVisible) ?
+    <Card style={[styles.card, cardStyle]}>
+      <Card.Content>
+        <TextInput
+          style={{marginBottom: 10}}
+          label='Item Name'
+          value={this.state.itemName}
+          onChangeText={itemName => this.setState({ itemName })}
+          mode='outlined'
+          autoFocus={true}
+          onSubmitEditing={() => { this.secondTextInput.focus(); }}
+        />
+        <TextInput
+          ref={(input) => { this.secondTextInput = input; }}
+          label='Item Description (Optional)'
+          value={this.state.itemDesc}
+          onChangeText={itemDesc => this.setState({ itemDesc })}
+          mode='outlined'
+          multiline
+          returnKeyType='done'
+          blurOnSubmit={true}
+        />
+      </Card.Content>
+      <Card.Actions>
+        <Button onPress={this._toggleNewItemCard}>Cancel</Button>
+        <Button onPress={this._performItemPost}>Add</Button>
+      </Card.Actions>
+    </Card> : null)
     return (
         <View style={styles.container}>
           <Transition shared={name} >
@@ -175,4 +197,4 @@ const mapStateToProps = state => ({
   items: state.items.items
 });
 
-export default connect(mapStateToProps, { fetchItems })(HomeScreen);
+export default connect(mapStateToProps, { fetchItems, performItemPost })(HomeScreen);
