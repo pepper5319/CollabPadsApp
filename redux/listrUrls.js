@@ -1,5 +1,5 @@
-const baseUrl = 'http://localhost:8000'; //DEVELOPMENT
-// const baseUrl = ''; //PRODUCTION
+// const baseUrl = 'http://localhost:8000'; //DEVELOPMENT
+const baseUrl = 'https://collabpads.herokuapp.com'; //PRODUCTION
 export const BASE_ROUTER_URL = '/'; //DEVELOPMENT
 // export const BASE_ROUTER_URL = '/dashboard/'; //PRODUCTION
 

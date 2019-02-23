@@ -21,7 +21,7 @@ import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 
 const styles = StyleSheet.create({});
 
-  const MainStack = FluidNavigator(
+  const MainStack = createStackNavigator(
     {
       Home: HomeScreen,
       Details: Detail,

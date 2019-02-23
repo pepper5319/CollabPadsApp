@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import { connect } from 'react-redux';
 import { Appbar } from 'react-native-paper';
-import { FAB, BottomNavigation } from 'react-native-paper';
+import { FAB, BottomNavigation, Dialog, Portal, Paragraph, Button } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 
@@ -27,6 +27,10 @@ const styles = StyleSheet.create({
 
 class BottomNav extends Component {
 
+  constructor(){
+    super();
+  }
+
   render() {
     return (
       <View>
@@ -36,7 +40,7 @@ class BottomNav extends Component {
           <FAB
             style={styles.fab}
             icon="add"
-            onPress={() => console.log('Pressed')}
+            onPress={this.props.onFABPress}
           />
       </View>
     );
