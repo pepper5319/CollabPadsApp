@@ -21,7 +21,7 @@ class Item extends Component {
           <Paragraph>{this.props.data.description}</Paragraph>
         </Card.Content>
         <Card.Actions>
-          <Button>Remove</Button>
+          <Button onPress={(e) => this.props.onRemove(e, this.props.data.static_id, this.props.listID)}>Remove</Button>
         </Card.Actions>
       </Card>
     );

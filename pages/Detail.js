@@ -12,7 +12,7 @@ import Item from '../components/Item.js';
 
 import { LISTS_URL, ITEMS_URL } from '../redux/listrUrls.js';
 import { fetchLists } from '../redux/actions/listActions.js';
-import { fetchItems, performItemPost } from '../redux/actions/itemActions.js';
+import { fetchItems, performItemPost, deleteItem } from '../redux/actions/itemActions.js';
 
 const styles = StyleSheet.create({
   container: {
@@ -110,6 +110,11 @@ class HomeScreen extends Component {
     }
   }
 
+  _deleteItem = (e, itemID, listID) => {
+    e.preventDefault();
+    this.props.deleteItem(ITEMS_URL, itemID, listID, this.props.token);
+  }
+
   _toggleNewItemCard = () => {
     if(this.state.newItemCardVisible === true){
       Animated.timing(this._newCardVisibility, {
@@ -130,7 +135,7 @@ class HomeScreen extends Component {
 
   render() {
     var items = this.props.items.map((item) => (
-      <Item key={item.static_id} data={item} />
+      <Item key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem}/>
     ));
     const { navigation } = this.props;
     const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
@@ -197,4 +202,4 @@ const mapStateToProps = state => ({
   items: state.items.items
 });
 
-export default connect(mapStateToProps, { fetchItems, performItemPost })(HomeScreen);
+export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem })(HomeScreen);
