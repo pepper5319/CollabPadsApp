@@ -1,4 +1,4 @@
-import { FETCH_LISTS, FETCH_SHARED_LISTS, FETCH_LISTS_SUCCESS, FETCH_SHARED_LISTS_SUCCESS, LIST_POST_SUCCESS, LIST_DELETE_SUCCESS } from './types';
+import { FETCH_LISTS, FETCH_SHARED_LISTS, FETCH_LISTS_SUCCESS, FETCH_SHARED_LISTS_SUCCESS, LIST_POST_SUCCESS, LIST_DELETE_SUCCESS, TRYING_LIST_POST } from './types';
 import { SHARED_LISTS_URL, LOGOUT_URL } from '../listrUrls';
 import { performLogout } from './userActions.js';
 
@@ -57,6 +57,7 @@ export const deleteList = (url, listId, token) => dispatch => {
 
 export const performListPost = (url, listData, token) => dispatch => {
   // var csrftoken = Cookies.get('csrftoken');
+  dispatch({type: TRYING_LIST_POST});
   fetch(url, {
     method: 'POST',
     headers: {
@@ -67,6 +68,7 @@ export const performListPost = (url, listData, token) => dispatch => {
   })
   .then(res => {
     if(res.status === 201){
+      dispatch({type: LIST_POST_SUCCESS});
       dispatch(fetchLists(url, token));
     }else{
       console.log(res.json());
