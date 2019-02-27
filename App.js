@@ -34,7 +34,12 @@ const styles = StyleSheet.create({});
       },
       initialRouteName: 'Home',
       gesturesEnabled: true,
-      mode: 'card'
+      mode: 'card',
+      transitionConfig: () => ({
+        transitionSpec: {
+          duration: 0,  // Set the animation duration time as 0 !!
+        },
+      }),
     }
   );
 

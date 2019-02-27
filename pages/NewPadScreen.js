@@ -49,10 +49,15 @@ class NewPadScreen extends Component {
       newCollab: '',
       collabList: [],
       readOnly: false
-    }
+    },
+    this._visibility = new Animated.Value(0);
   }
 
   componentWillMount(){
+    Animated.timing(this._visibility, {
+      toValue: 1,
+      duration: 300,
+    }).start();
   }
 
   componentDidMount(){
@@ -114,9 +119,17 @@ class NewPadScreen extends Component {
 
     var collabs = this.state.collabList.map((collab) => <Chip key={collab} icon="face" style={styles.collab__item} onClose={() => this.deleteItem(collab)}>{collab}</Chip>);
 
+    const iconStyle = {
+      opacity: this._visibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      })
+    };
+
     return (
         <View style={styles.container}>
           <View style={styles.main}>
+            <Animated.View style={[{flex: 1}, iconStyle]}>
             <Headline style={{marginTop: 16, marginBottom: 16}}>New Pad</Headline>
             <TextInput
               label='Name Your Pad'
@@ -153,6 +166,7 @@ class NewPadScreen extends Component {
                 Create Pad
               </Button>
             </View>
+            </Animated.View>
           </View>
         </View>
     );

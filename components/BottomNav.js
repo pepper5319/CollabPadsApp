@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Dimensions} from 'react-native';
+import {Platform, StyleSheet, Text, View, Dimensions, Animated, Easing} from 'react-native';
 import { connect } from 'react-redux';
 import { Appbar } from 'react-native-paper';
 import { FAB, BottomNavigation } from 'react-native-paper';
@@ -32,18 +32,65 @@ const styles = StyleSheet.create({
 
 class BottomNav extends Component {
 
+  constructor(){
+    super();
+    this._verticalPos = new Animated.Value(0);
+    this._iconOpacity = new Animated.Value(1);
+  }
+
+  _goToNewPad = () => {
+    Animated.timing(this._iconOpacity, {
+      toValue: 0,
+      duration: 200,
+    }).start();
+    Animated.timing(this._verticalPos, {
+      toValue: 1,
+      duration: 350,
+      easing: Easing.inOut(Easing.quad)
+    }).start(() => {
+      this.props.navigator.navigate('NewPad');
+      Animated.timing(this._iconOpacity, {
+        toValue: 1,
+        duration: 10,
+      }).start()
+      Animated.timing(this._verticalPos, {
+        toValue: 0,
+        duration: 10,
+      }).start();
+    });
+  }
+
   render() {
+    const containerStyle = {
+      paddingBottom: this._verticalPos.interpolate({
+        inputRange: [0, 1],
+        outputRange: [50, (Dimensions.get('window').height-(50+28))],
+      })
+    };
+    const iconStyle = {
+      opacity: this._iconOpacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }),
+      flexDirection: 'row',
+      color: 'black'
+    };
     return (
       <View>
-        <Appbar style={styles.appbar}>
-          <Appbar.Action icon="more-vert" onPress={() => this.props.performLogout(LOGOUT_URL)} />
-          <Appbar.Action icon="face" onPress={() => console.log('Pressed mail')} />
+        <Appbar style={[styles.appbar,  containerStyle]}>
+          <Animated.View style={iconStyle}>
+            <Appbar.Action color="black" icon="more-vert" onPress={() => this.props.performLogout(LOGOUT_URL)} />
+            <Appbar.Action color="black" icon="face" onPress={() => console.log('Pressed mail')} />
+          </Animated.View>
         </Appbar>
+          <Animated.View style={iconStyle}>
           <FAB
             style={styles.fab}
             icon="create"
-            onPress={() => this.props.navigator.navigate('NewPad')}
+            onPress={() => this._goToNewPad()}
           />
+
+        </Animated.View>
       </View>
     );
   }
