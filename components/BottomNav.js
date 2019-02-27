@@ -38,7 +38,7 @@ class BottomNav extends Component {
           <FAB
             style={styles.fab}
             icon="create"
-            onPress={() => console.log('Pressed')}
+            onPress={() => this.props.navigator.navigate('NewPad')}
           />
       </View>
     );

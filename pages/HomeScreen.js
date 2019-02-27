@@ -96,7 +96,7 @@ class HomeScreen extends Component {
             </View>
           </ScrollView>}
           {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
-          <BottomNav/>
+          <BottomNav navigator={this.props.navigation}/>
           </Animated.View>
         </View>
     );

@@ -16,6 +16,7 @@ import HomeScreen from './pages/HomeScreen.js';
 import Detail from './pages/Detail.js';
 import Login from './pages/LoginScreen.js';
 import Loading from './pages/LoadingScreen.js';
+import NewPadScreen from './pages/NewPadScreen.js';
 import {AsyncStorage} from 'react-native';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 
@@ -25,6 +26,7 @@ const styles = StyleSheet.create({});
     {
       Home: HomeScreen,
       Details: Detail,
+      NewPad: NewPadScreen
     }, {
       headerMode: 'none',
       navigationOptions: {
