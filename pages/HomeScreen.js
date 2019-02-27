@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   contentContainer: {
-    ...ifIphoneX({paddingTop: 40}, {paddingTop: 30})
+    ...ifIphoneX({paddingTop: 48}, {paddingTop: 30})
   }
 });
 

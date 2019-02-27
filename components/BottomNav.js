@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View, Dimensions} from 'react-native';
 import { connect } from 'react-redux';
 import { Appbar } from 'react-native-paper';
 import { FAB, BottomNavigation } from 'react-native-paper';
@@ -7,13 +7,17 @@ import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { LOGOUT_URL } from '../redux/listrUrls.js';
 import {performLogin, performLogout} from '../redux/actions/userActions.js';
 
+// Dimensions.get('window').height-(50+28),
+
 const styles = StyleSheet.create({
   appbar: {
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     backgroundColor: 'white',
     ...ifIphoneX({
             paddingBottom: 50,
             paddingTop: 30
-        })
+        }),
   },
   fab: {
     position: 'absolute',
