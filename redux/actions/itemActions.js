@@ -19,6 +19,10 @@ export const fetchItems = (url, listID, token) => dispatch =>{
     }));
 }
 
+export const clearItems = () => dispatch =>{
+  dispatch({type: DISMISS_ITEMS});
+}
+
 export const performItemPost = (url, itemData, listID, token) => dispatch => {
   fetch(url, {
     method: 'POST',

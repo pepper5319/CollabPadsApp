@@ -2,6 +2,13 @@ import { FETCH_ITEMS, FETCH_ITEMS_SUCCESS, DISMISS_ITEMS } from "../actions/type
 
 export default function itemReducer(state = {items: [], showModal: false, loading: true}, action){
     switch (action.type) {
+      case DISMISS_ITEMS:
+        console.log("CLEARING");
+        return {
+          ...state,
+          loading: false,
+          items: []
+        }
       case FETCH_ITEMS:
         return {
           ...state,

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, View, ScrollView, Animated, RefreshControl, FlatList} from 'react-native';
 import { TextInput, Headline, TouchableRipple, Text, Chip, Switch, Subheading, Button } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
-import { StackActions, NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions, Transitioner } from 'react-navigation';
 import { connect } from 'react-redux';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 
@@ -115,6 +115,14 @@ class NewPadScreen extends Component {
     return text;
   }
 
+  _configureTransition = (transitionProps, prevTransitionProps) => {
+    return {
+      // duration in milliseconds, default: 250
+      duration: 0,
+      // An easing function from `Easing`, default: Easing.inOut(Easing.ease)
+    }
+  }
+
   render() {
 
     var collabs = this.state.collabList.map((collab) => <Chip key={collab} icon="face" style={styles.collab__item} onClose={() => this.deleteItem(collab)}>{collab}</Chip>);
@@ -125,6 +133,8 @@ class NewPadScreen extends Component {
         outputRange: [0, 1],
       })
     };
+
+
 
     return (
         <View style={styles.container}>

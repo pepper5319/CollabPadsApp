@@ -12,7 +12,7 @@ import Item from '../components/Item.js';
 
 import { LISTS_URL, ITEMS_URL } from '../redux/listrUrls.js';
 import { fetchLists } from '../redux/actions/listActions.js';
-import { fetchItems, performItemPost, deleteItem } from '../redux/actions/itemActions.js';
+import { fetchItems, performItemPost, deleteItem, clearItems } from '../redux/actions/itemActions.js';
 
 const styles = StyleSheet.create({
   container: {
@@ -134,13 +134,11 @@ class HomeScreen extends Component {
       refreshing: false
     }
     this._visibility = new Animated.Value(0);
+    this.didBlur = null;
   }
 
-  componentWillMount(){
-    Animated.timing(this._visibility, {
-      toValue: 1,
-      duration: 300,
-    }).start();
+  componentWillReceiveProps(props){
+
   }
   componentDidMount(){
     const { navigation } = this.props;
@@ -148,8 +146,29 @@ class HomeScreen extends Component {
                     padName: navigation.getParam('name', 'NO PAD AVALIABLE')
                   });
     this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
+    this.didBlur = navigation.addListener(
+      'didBlur',
+      payload => {
+        this.props.clearItems();
+        Animated.timing(this._visibility, {
+          toValue: 0,
+          duration: 300,
+        }).start();
+      }
+    );
+  }
 
+  componentDidUpdate(){
+    if(this.props.items !== null && this.props.items !== undefined && this.props.items.length >= 0){
+      Animated.timing(this._visibility, {
+        toValue: 1,
+        duration: 300,
+      }).start();
+    }
+  }
 
+  componentWillDismount(){
+    this.didBlur.remove();
   }
 
   makeid() {
@@ -210,10 +229,6 @@ class HomeScreen extends Component {
         inputRange: [0, 1],
         outputRange: [0, 1],
       }),
-      scale: this._visibility.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      }),
     };
 
     var newCard = ((this.state.newItemCardVisible) ? <NewItemCard performItemPost={this._performItemPost} toggleNewItemCard={this._toggleNewItemCard}/> : null)
@@ -242,6 +257,7 @@ class HomeScreen extends Component {
           <BottomPadNav onFABPress={this._toggleNewItemCard}/>
         </View>
     );
+
   }
 }
 
@@ -252,4 +268,4 @@ const mapStateToProps = state => ({
   loading: state.items.loading
 });
 
-export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem })(HomeScreen);
+export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem, clearItems })(HomeScreen);
