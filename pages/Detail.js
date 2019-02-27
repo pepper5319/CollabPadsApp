@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   image: {
-    ...ifIphoneX({}, {maxHeight: 200})
+    ...ifIphoneX({maxHeight: 200}, {maxHeight: 200})
   },
   item__container: {
     flex: 5

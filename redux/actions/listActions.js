@@ -1,5 +1,6 @@
 import { FETCH_LISTS, FETCH_SHARED_LISTS, FETCH_LISTS_SUCCESS, FETCH_SHARED_LISTS_SUCCESS, LIST_POST_SUCCESS, LIST_DELETE_SUCCESS } from './types';
-import { SHARED_LISTS_URL } from '../listrUrls';
+import { SHARED_LISTS_URL, LOGOUT_URL } from '../listrUrls';
+import { performLogout } from './userActions.js';
 
 export const fetchLists = (url, token) => dispatch =>{
     dispatch({type: FETCH_LISTS});
@@ -23,7 +24,11 @@ export const fetchSharedLists = (url, oldData, token) => dispatch =>{
       },
     })
     .then(res => {
-      return res.json();
+      if(res.status === 200){
+        return res.json();
+      }else{
+        dispatch(performLogout(LOGOUT_URL));
+      }
     })
     .then(data => {
       dispatch({type: FETCH_LISTS_SUCCESS, lists: oldData, shared: data})

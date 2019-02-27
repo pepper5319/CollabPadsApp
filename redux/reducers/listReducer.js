@@ -14,6 +14,7 @@ export default function listReducer(state = {data: [], loading: true}, action){
             loading: false
           }
         }else{
+          console.log(action.lists);
           return {
             data: action.lists,
             sharedData: action.shared,
