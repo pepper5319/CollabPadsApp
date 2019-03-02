@@ -1,4 +1,4 @@
-import { FETCH_LISTS, FETCH_SHARED_LISTS, FETCH_LISTS_SUCCESS, FETCH_SHARED_LISTS_SUCCESS, LIST_POST_SUCCESS, LIST_DELETE_SUCCESS, TRYING_LIST_POST } from './types';
+import { FETCH_LISTS, FETCH_SHARED_LISTS, FETCH_LISTS_SUCCESS, FETCH_SHARED_LISTS_SUCCESS, LIST_POST_SUCCESS, LIST_DELETE_SUCCESS, TRYING_LIST_POST, FETCH_SINGLE_LIST_SUCCESS } from './types';
 import { SHARED_LISTS_URL, LOGOUT_URL } from '../listrUrls';
 import { performLogout } from './userActions.js';
 
@@ -35,6 +35,26 @@ export const fetchSharedLists = (url, oldData, token) => dispatch =>{
     });
 }
 
+export const fetchSingleList = (url, listId, token) => dispatch =>{
+    fetch(url + listId + "/", {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': 'Token ' + token
+      },
+    })
+    .then(res => {
+      if(res.status === 200){
+        return res.json();
+      }else{
+        dispatch(performLogout(LOGOUT_URL));
+      }
+    })
+    .then(data => {
+      dispatch({type: FETCH_SINGLE_LIST_SUCCESS, list: data});
+    });
+}
+
 export const deleteList = (url, listId, token) => dispatch => {
   // var csrftoken = Cookies.get('csrftoken');
   fetch(url+listId+'/', {
@@ -52,7 +72,6 @@ export const deleteList = (url, listId, token) => dispatch => {
       console.log(res.json().detail);
     }
   });
-
 }
 
 export const performListPost = (url, listData, token) => dispatch => {

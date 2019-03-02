@@ -172,7 +172,7 @@ class NewPadScreen extends Component {
             <Subheading style={{fontWeight: '500', marginTop: 10}}> Like Only</Subheading>
             </View>
             <View style={{flexGrow: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
-              <Button style={{marginBottom: 48}} mode="outlined" onPress={() => this.createNewList()}>
+              <Button style={{marginBottom: 48}} mode="contained" onPress={() => this.createNewList()}>
                 Create Pad
               </Button>
             </View>
