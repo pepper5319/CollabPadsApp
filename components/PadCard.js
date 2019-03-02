@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, IconButton } from 'react-native-paper';
+import {Platform, StyleSheet, Text, View, ScrollView, Dimensions} from 'react-native';
+import { Avatar, Button, Card, Title, Paragraph, IconButton, Portal, Dialog, TextInput, Chip, Switch, Subheading } from 'react-native-paper';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
+import { ifIphoneX } from 'react-native-iphone-x-helper'
+import PadDialog from './PadDialog.js';
 
 const styles = StyleSheet.create({
   card:{
@@ -9,21 +11,51 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 16
+  },
+  collab__item: {
+    marginTop: 8,
+    marginRight: 8
+  },
+  collab__list: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 10,
+  },
+  dialog__title:{
+    ...ifIphoneX({paddingTop: 48}, {paddingTop: 30})
+  },
+  dialog__actions:{
+    flex: 1,
+    flexDirection: 'row',
+    alignItems:'flex-end',
+    ...ifIphoneX({marginBottom: 24}, {marginBottom: 16})
   }
 });
 
 class PadCard extends Component {
+
+  state = {
+    visible: false,
+  };
+
+  _showDialog = () => this.setState({ visible: true });
+
+  _hideDialog = () => this.setState({ visible: false });
+
   render(){
     const name = "bgImage" + this.props.data.static_id;
     return(
       <Card style={styles.card} onPress={this.props.navigate}>
           <Card.Cover style={{borderTopLeftRadius: 16, borderTopRightRadius: 16}} source={{ uri: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ' }} />
-          <Card.Content>
-            <Title style={{paddingTop: 16}}>{this.props.data.name}</Title>
-          </Card.Content>
+            <Card.Title
+              title={this.props.data.name}
+              right={(props) => <IconButton {...props} icon="more-vert" onPress={() => this._showDialog()} />}
+            />
+          {this.state.visible === true && <PadDialog isVisible={this.state.visible} hideDialog={this._hideDialog} data={this.props.data}/>}
       </Card>
     );
   }
 }
+
 
 export default PadCard;
