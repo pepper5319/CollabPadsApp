@@ -68,6 +68,10 @@ class HomeScreen extends Component {
     this.setState({refreshing: this.props.loading});
   }
 
+  _goToDetail = (pad) => {
+    this.props.navigation.navigate('Details', pad);
+  }
+
   render() {
     // Remove the listener when you are done
     const containerStyle = {
@@ -79,7 +83,7 @@ class HomeScreen extends Component {
     };
 
     var pads = this.props.data.map((pad) => (
-        <PadCard key={pad.static_id} data={pad} navigate={() => this.props.navigation.navigate('Details', pad)} />
+        <PadCard key={pad.static_id} data={pad} navigate={() => this._goToDetail(pad)} />
       ));
     return (
         <View style={styles.container}>

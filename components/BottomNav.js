@@ -36,6 +36,7 @@ class BottomNav extends Component {
     super();
     this._verticalPos = new Animated.Value(0);
     this._iconOpacity = new Animated.Value(1);
+    this.didBlurSubscription = null
   }
 
   _goToNewPad = () => {
@@ -46,22 +47,30 @@ class BottomNav extends Component {
 
       Animated.timing(this._verticalPos, {
         toValue: 1,
-        duration: 250,
-        easing: Easing.inOut(Easing.quad)
+        duration: 300,
+        easing: Easing.bezier(0.4, 0.0, 0.2, 1)
       }).start(() => {
         this.props.navigator.navigate('NewPad');
-        Animated.timing(this._iconOpacity, {
-          toValue: 1,
-          duration: 10,
-        }).start()
-        Animated.timing(this._verticalPos, {
-          toValue: 0,
-          duration: 10,
-        }).start();
+
       });
 
     });
+  }
 
+  componentDidMount(){
+    this.didBlurSubscription = this.props.navigator.addListener(
+      'didBlur',
+      payload => {
+        Animated.timing(this._iconOpacity, {
+          toValue: 1,
+          duration: 300,
+        }).start()
+        Animated.timing(this._verticalPos, {
+          toValue: 0,
+          duration: 300,
+        }).start();
+      }
+    );
   }
 
   render() {
@@ -102,6 +111,8 @@ class BottomNav extends Component {
             />
       </View>
     );
+
+    this.didBlurSubscription.remove();
   }
 }
 const mapStateToProps = state => ({
