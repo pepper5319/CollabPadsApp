@@ -19,7 +19,7 @@ import Loading from './pages/LoadingScreen.js';
 import NewPadScreen from './pages/NewPadScreen.js';
 import {AsyncStorage} from 'react-native';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
-import { fromLeft, fadeIn, fromRight } from 'react-navigation-transitions'
+import { fromLeft, fadeIn, fromRight, fadeOut } from 'react-navigation-transitions'
 
 const handleCustomTransition = ({ scenes }) => {
   const prevScene = scenes[scenes.length - 2];
@@ -33,7 +33,11 @@ const handleCustomTransition = ({ scenes }) => {
   } else if (prevScene
     && prevScene.route.routeName === 'Home'
     && nextScene.route.routeName === 'NewPad') {
-    return fadeIn();
+    return fadeIn(0);
+  } else if (prevScene
+    && prevScene.route.routeName === 'NewPad'
+    && nextScene.route.routeName === 'Home') {
+    return fadeOut(0);
   }
   return fromLeft();
 }

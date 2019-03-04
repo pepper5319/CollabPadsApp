@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ScrollView, Dimensions, Animated, KeyboardAvoidingView} from 'react-native';
+import {Platform, StyleSheet, Text, View, ScrollView, Dimensions, Animated, KeyboardAvoidingView, BackHandler} from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, IconButton, Portal, Dialog, TextInput, Chip, Switch, Subheading, Headline } from 'react-native-paper';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { connect } from 'react-redux';
 import { addCollab, fetchLists, deleteList } from '../redux/actions/listActions.js';
 import { LISTS_URL } from '../redux/listrUrls.js';
+
 
 const styles = StyleSheet.create({
   card:{
@@ -49,7 +50,7 @@ class PadDialog extends Component {
   constructor(){
     super();
     this._visibility = new Animated.Value(0);
-
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
 
   componentWillMount(){
@@ -59,6 +60,7 @@ class PadDialog extends Component {
     }).start();
     this.setState({collabList: this.props.data.collaborators});
     this.setState({readOnly: this.props.data.readOnly});
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
   }
 
   addCollabs = () => {
@@ -126,10 +128,16 @@ class PadDialog extends Component {
   }
 
   componentWillUnmount(){
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     Animated.timing(this._visibility, {
       toValue: 0,
       duration: 300,
     }).start();
+  }
+
+  handleBackButtonClick() {
+    this.props.hideDialog();
+    return true;
   }
 
   render(){
