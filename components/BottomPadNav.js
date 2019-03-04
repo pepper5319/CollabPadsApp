@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View, Share} from 'react-native';
 import { connect } from 'react-redux';
 import { Appbar } from 'react-native-paper';
 import { FAB, BottomNavigation, Dialog, Portal, Paragraph, Button } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
+import { SHARED_LINK_URL } from '../redux/listrUrls.js';
 
 const styles = StyleSheet.create({
   appbar: {
@@ -31,11 +32,34 @@ class BottomNav extends Component {
     super();
   }
 
+  onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          SHARED_LINK_URL + this.props.data,
+      },{
+        dialogTitle: "Share This Pad"
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   render() {
     return (
       <View>
         <Appbar style={styles.appbar}>
-          <Appbar.Action icon="face" onPress={() => console.log('Pressed mail')} />
+          <Appbar.Action icon="share" onPress={() => this.onShare()} />
         </Appbar>
           <FAB
             style={styles.fab}
