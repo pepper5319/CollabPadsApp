@@ -254,7 +254,7 @@ class HomeScreen extends Component {
               {items}
             </ScrollView>
           </Animated.View>
-          <BottomPadNav onFABPress={this._toggleNewItemCard}/>
+          <BottomPadNav data={this.state.padID} onFABPress={this._toggleNewItemCard}/>
         </View>
     );
 
