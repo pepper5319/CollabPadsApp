@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl, Dimensions} from 'react-native';
 import { FAB, Card, Appbar } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 import PadCard from '../components/PadCard.js';
 import BottomNav from '../components/BottomNav.js';
@@ -44,7 +45,12 @@ class HomeScreen extends Component {
   constructor(){
     super();
     this.state = {
-      refreshing: false
+      refreshing: false,
+      index: 0,
+      routes: [
+        { key: 'first', title: 'First' },
+        { key: 'second', title: 'Second' },
+      ],
     }
     this._visibility = new Animated.Value(0);
   }
@@ -85,21 +91,63 @@ class HomeScreen extends Component {
     var pads = this.props.data.map((pad) => (
         <PadCard key={pad.static_id} data={pad} navigate={() => this._goToDetail(pad)} />
       ));
+
+    var sharedPads = this.props.sharedData.map((pad) => (
+        <PadCard key={pad.static_id} data={pad} navigate={() => this._goToDetail(pad)} />
+      ));
+
+    const MyPads = () => (
+      <View style={styles.container}>
+        <Animated.View style={containerStyle}>
+        {pads.length > 0 && <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
+            refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }>
+          <View>
+            {pads}
+          </View>
+        </ScrollView>}
+        {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
+        </Animated.View>
+      </View>
+    );
+    const SharedPads = () => (
+      <View style={styles.container}>
+        <Animated.View style={containerStyle}>
+        {pads.length > 0 && <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
+            refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }>
+          <View>
+            {sharedPads}
+          </View>
+        </ScrollView>}
+        {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
+        </Animated.View>
+      </View>
+    );
+
+    const renderTabBar = () => null;
+
     return (
         <View style={styles.container}>
           <Animated.View style={containerStyle}>
-          {pads.length > 0 && <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
-              refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh}
-              />
-            }>
-            <View>
-              {pads}
-            </View>
-          </ScrollView>}
-          {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
+            <TabView
+              navigationState={this.state}
+              renderScene={SceneMap({
+                first: MyPads,
+                second: SharedPads,
+              })}
+              onIndexChange={index => this.setState({ index })}
+              initialLayout={{ width: Dimensions.get('window').width }}
+              renderTabBar={renderTabBar}
+            />
           <BottomNav navigator={this.props.navigation}/>
           </Animated.View>
         </View>
@@ -111,6 +159,7 @@ class HomeScreen extends Component {
 const mapStateToProps = state => ({
   token: state.users.token,
   data: state.lists.data,
+  sharedData: state.lists.sharedData,
   loading: state.lists.loading
 });
 

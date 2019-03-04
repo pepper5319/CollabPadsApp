@@ -38,6 +38,10 @@ class PadCard extends Component {
     visible: false,
   };
 
+  componentDidMount(){
+    console.log(this.props.data);
+  }
+
   _showDialog = () => this.setState({ visible: true });
 
   _hideDialog = () => this.setState({ visible: false });
@@ -46,7 +50,7 @@ class PadCard extends Component {
     const name = "bgImage" + this.props.data.static_id;
     return(
       <Card style={styles.card} onPress={this.props.navigate}>
-          <Card.Cover style={{borderTopLeftRadius: 16, borderTopRightRadius: 16}} source={{ uri: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ' }} />
+          <Card.Cover style={{borderTopLeftRadius: 16, borderTopRightRadius: 16}} source={{ uri: 'https://images.unsplash.com/photo-1549526809-d207fdd074e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80' }} />
             <Card.Title
               title={this.props.data.name}
               right={(props) => <IconButton {...props} icon="more-vert" onPress={() => this._showDialog()} />}
