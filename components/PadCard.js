@@ -36,10 +36,11 @@ class PadCard extends Component {
 
   state = {
     visible: false,
+    isShared: false
   };
 
-  componentDidMount(){
-    console.log(this.props.data);
+  componentDidMount(props){
+    console.log(this.props.isShared);
   }
 
   _showDialog = () => this.setState({ visible: true });
@@ -51,10 +52,15 @@ class PadCard extends Component {
     return(
       <Card style={styles.card} onPress={this.props.navigate}>
           <Card.Cover style={{borderTopLeftRadius: 16, borderTopRightRadius: 16}} source={{ uri: 'https://images.unsplash.com/photo-1549526809-d207fdd074e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80' }} />
-            <Card.Title
-              title={this.props.data.name}
-              right={(props) => <IconButton {...props} icon="more-vert" onPress={() => this._showDialog()} />}
-            />
+          {this.props.isShared && <Card.Title
+            title={this.props.data.name}
+            subtitle={this.props.data.owner}
+          />}
+          {!this.props.isShared && <Card.Title
+            title={this.props.data.name}
+            right={(props) => <IconButton {...props} icon="more-vert" onPress={() => this._showDialog()} />}
+          />}
+
           {this.state.visible === true && <PadDialog isVisible={this.state.visible} hideDialog={this._hideDialog} data={this.props.data}/>}
       </Card>
     );

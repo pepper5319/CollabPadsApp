@@ -74,14 +74,7 @@ class BottomNav extends Component {
   }
 
   render() {
-    var minHeight = isIphoneX() ? 50 : 0;
-    var maxHeight = isIphoneX() ? 50 : 25;
-    const containerStyle = {
-      paddingBottom: this._verticalPos.interpolate({
-        inputRange: [0, 1],
-        outputRange: [minHeight, (Dimensions.get('window').height-(maxHeight+28))],
-      }),
-    };
+
     const iconStyle = {
       opacity: this._iconOpacity.interpolate({
         inputRange: [0, 1],
@@ -94,21 +87,19 @@ class BottomNav extends Component {
       opacity: this._iconOpacity.interpolate({
         inputRange: [0, 1],
         outputRange: [0, 1],
-      })
+      }),
+      transform: [{ scaleX: this._iconOpacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }) }, { scaleY: this._iconOpacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }) }]
     };
     return (
       <View>
-        <Appbar style={[styles.appbar,  containerStyle]}>
-          <Animated.View style={iconStyle}>
-            <Appbar.Action color="black" icon="more-vert" onPress={() => this.props.performLogout(LOGOUT_URL)} />
-            <Appbar.Action color="black" icon="face" onPress={() => console.log('Pressed mail')} />
-          </Animated.View>
-        </Appbar>
-            <FAB
-              style={[styles.fab, fabStyle]}
-              icon="create"
-              onPress={() => this._goToNewPad()}
-            />
+
+
       </View>
     );
 

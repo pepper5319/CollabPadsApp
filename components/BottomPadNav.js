@@ -61,11 +61,7 @@ class BottomNav extends Component {
         <Appbar style={styles.appbar}>
           <Appbar.Action icon="share" onPress={() => this.onShare()} />
         </Appbar>
-          <FAB
-            style={styles.fab}
-            icon="add"
-            onPress={this.props.onFABPress}
-          />
+      
       </View>
     );
   }

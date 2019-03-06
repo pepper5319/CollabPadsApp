@@ -10,8 +10,11 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import PadCard from '../components/PadCard.js';
 import BottomNav from '../components/BottomNav.js';
 
-import { LISTS_URL } from '../redux/listrUrls.js';
+import { LISTS_URL, USER_URL } from '../redux/listrUrls.js';
 import { fetchLists } from '../redux/actions/listActions.js';
+import { getUserData } from '../redux/actions/userActions.js';
+import { setNavigator } from '../redux/actions/navActions.js';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -66,6 +69,7 @@ class HomeScreen extends Component {
     if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
       this.props.fetchLists(LISTS_URL, this.props.token);
     }
+    this.props.setNavigator(this.props.navigation);
   }
 
   _onRefresh = () => {
@@ -93,7 +97,7 @@ class HomeScreen extends Component {
       ));
 
     var sharedPads = this.props.sharedData.map((pad) => (
-        <PadCard key={pad.static_id} data={pad} navigate={() => this._goToDetail(pad)} />
+        <PadCard key={pad.static_id} data={pad} isShared={true} navigate={() => this._goToDetail(pad)} />
       ));
 
     const MyPads = () => (
@@ -148,7 +152,6 @@ class HomeScreen extends Component {
               initialLayout={{ width: Dimensions.get('window').width }}
               renderTabBar={renderTabBar}
             />
-          <BottomNav navigator={this.props.navigation}/>
           </Animated.View>
         </View>
     );
@@ -160,7 +163,7 @@ const mapStateToProps = state => ({
   token: state.users.token,
   data: state.lists.data,
   sharedData: state.lists.sharedData,
-  loading: state.lists.loading
+  loading: state.lists.loading,
 });
 
-export default connect(mapStateToProps, { fetchLists })(HomeScreen);
+export default connect(mapStateToProps, { fetchLists, setNavigator })(HomeScreen);
