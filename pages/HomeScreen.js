@@ -146,6 +146,8 @@ class HomeScreen extends Component {
               initialLayout={{ width: Dimensions.get('window').width }}
               renderTabBar={renderTabBar}
             />
+            <BottomNav navigator={this.props.navigation}/>
+
           </Animated.View>
         </View>
     );
