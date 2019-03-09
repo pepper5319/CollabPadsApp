@@ -21,3 +21,4 @@ export const FETCH_SINGLE_LIST_SUCCESS = 'FETCH_SINGLE_LIST_SUCCESS';
 export const NO_FAB = 'NO_FAB';
 export const CHANGE_FAB = 'CHANGE_FAB';
 export const SET_NAVIGATOR = 'SET_NAVIGATOR';
+export const CHANGE_FAB_FUNC = 'CHANGE_FAB_FUNC';

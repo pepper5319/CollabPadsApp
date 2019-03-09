@@ -121,30 +121,15 @@ class App extends Component {
   }
 
   handleFABClick = () =>{
-    if(this.props.fabFunction == 'home' && this.props.nav !== null  && this.props.nav !== undefined){
+    if(this.props.fabScreen == 'home' && this.props.nav !== null  && this.props.nav !== undefined){
       this._goToNewPad()
+    }else if(this.props.fabScreen == 'detail' && this.props.nav !== null  && this.props.nav !== undefined){
+      this.props.fabFunction();
     }
   }
 
   _goToNewPad = () => {
-    Animated.timing(this._iconOpacity, {
-      toValue: 0,
-      duration: 100,
-    }).start(() => {
-
-      Animated.timing(this._verticalPos, {
-        toValue: 1,
-        duration: 300,
-        easing: Easing.bezier(0.4, 0.0, 0.2, 1)
-      }).start(() => {
-        this.props.nav.navigate("NewPad");
-        Animated.timing(this._verticalPos, {
-          toValue: 0,
-          duration: 300,
-        }).start();
-      });
-
-    });
+    this.props.nav.navigate("NewPad");
   }
 
 
@@ -162,9 +147,9 @@ class App extends Component {
 
   render() {
 
-    var icon = (this.props.fabFunction === 'home') ? 'create' : 'add'
+    var icon = (this.props.fabScreen === 'home') ? 'create' : 'add'
 
-    
+
     const iconStyle = {
       opacity: this._iconOpacity.interpolate({
         inputRange: [0, 1],
@@ -201,11 +186,11 @@ class App extends Component {
               else if(currentScreen == 'Details'){
                 this.props.changeFAB('detail');
               }else{
-                this.props.changeFAB(null);
+
               }
             }
           }}/>
-        {this.props.fabFunction !== null &&
+        {this.props.fabScreen !== null &&
           <FAB
             style={[styles.fab]}
             color='white'
@@ -219,7 +204,8 @@ class App extends Component {
 
 const mapStateToProps = state => ({
   token: state.users.token,
-  fabFunction: state.nav.fab,
+  fabScreen: state.nav.fab,
+  fabFunction: state.nav.fabFunction,
   nav: state.nav.nav
 });
 

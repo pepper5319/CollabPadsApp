@@ -13,6 +13,7 @@ import Item from '../components/Item.js';
 import { LISTS_URL, ITEMS_URL } from '../redux/listrUrls.js';
 import { fetchLists } from '../redux/actions/listActions.js';
 import { fetchItems, performItemPost, deleteItem, clearItems } from '../redux/actions/itemActions.js';
+import { changeFABFunction } from '../redux/actions/navActions.js';
 
 const styles = StyleSheet.create({
   container: {
@@ -148,6 +149,7 @@ class HomeScreen extends Component {
                     readOnly: navigation.getParam('readOnly', false)
                   });
     this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
+    this.props.changeFABFunction(this._toggleNewItemCard);
     this.didBlur = navigation.addListener(
       'didBlur',
       payload => {
@@ -270,4 +272,4 @@ const mapStateToProps = state => ({
   loading: state.items.loading
 });
 
-export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem, clearItems })(HomeScreen);
+export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem, clearItems, changeFABFunction })(HomeScreen);
