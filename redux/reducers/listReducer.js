@@ -1,6 +1,6 @@
 import { TRYING_LIST_POST, LIST_POST_SUCCESS, FETCH_LISTS, FETCH_SHARED_LISTS, FETCH_LISTS_SUCCESS, FETCH_SHARED_LISTS_SUCCESS, FETCH_SINGLE_LIST_SUCCESS } from "../actions/types";
 
-export default function listReducer(state = {data: [], list: null, successfulPost: false, loading: true}, action){
+export default function listReducer(state = {data: [], sharedData: [], list: null, successfulPost: false, loading: true}, action){
     switch (action.type) {
       case TRYING_LIST_POST:
         return {
@@ -25,6 +25,7 @@ export default function listReducer(state = {data: [], list: null, successfulPos
             loading: false
           }
         }else{
+          console.log(action.shared);
           return {
             data: action.lists,
             sharedData: action.shared,

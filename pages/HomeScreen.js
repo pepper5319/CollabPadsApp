@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl, Dimensions} from 'react-native';
 import { FAB, Card, Appbar } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
+import { TabView, SceneMap } from 'react-native-tab-view';
 
 import PadCard from '../components/PadCard.js';
 import BottomNav from '../components/BottomNav.js';
@@ -47,7 +48,12 @@ class HomeScreen extends Component {
   constructor(){
     super();
     this.state = {
-      refreshing: false
+      refreshing: false,
+      index: 0,
+      routes: [
+        { key: 'first', title: 'First' },
+        { key: 'second', title: 'Second' },
+      ],
     }
     this._visibility = new Animated.Value(0);
   }
@@ -147,7 +153,6 @@ class HomeScreen extends Component {
               renderTabBar={renderTabBar}
             />
             <BottomNav navigator={this.props.navigation}/>
-
           </Animated.View>
         </View>
     );

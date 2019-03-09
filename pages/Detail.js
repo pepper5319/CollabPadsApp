@@ -256,6 +256,7 @@ class HomeScreen extends Component {
               {items}
             </ScrollView>
           </Animated.View>
+          <BottomPadNav data={this.state.padID}/>
         </View>
     );
 

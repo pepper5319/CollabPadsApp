@@ -164,14 +164,7 @@ class App extends Component {
 
     var icon = (this.props.fabFunction === 'home') ? 'create' : 'add'
 
-    var minHeight = isIphoneX() ? 50 : 0;
-    var maxHeight = isIphoneX() ? 50 : 25;
-    const containerStyle = {
-      paddingBottom: this._verticalPos.interpolate({
-        inputRange: [0, 1],
-        outputRange: [minHeight, (Dimensions.get('window').height-(maxHeight+28))],
-      }),
-    };
+    
     const iconStyle = {
       opacity: this._iconOpacity.interpolate({
         inputRange: [0, 1],
@@ -213,20 +206,12 @@ class App extends Component {
             }
           }}/>
         {this.props.fabFunction !== null &&
-          <View style={{backgroundColor: '#c8e6c9'}}>
-            <Appbar style={[styles.appbar,  containerStyle]}>
-              <Animated.View style={iconStyle}>
-                <Appbar.Action color="black" icon="clear" onPress={() => this.props.performLogout(LOGOUT_URL)} />
-                <Appbar.Action color="black" icon="face" onPress={() => console.log('Pressed mail')} />
-              </Animated.View>
-              <FAB
-                style={[styles.fab]}
-                color='white'
-                icon={icon}
-                onPress={() => this.handleFABClick()}
-              />
-            </Appbar>
-          </View>
+          <FAB
+            style={[styles.fab]}
+            color='white'
+            icon={icon}
+            onPress={() => this.handleFABClick()}
+          />
         }
       </View>);
   }
