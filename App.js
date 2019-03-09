@@ -100,6 +100,51 @@ const styles = StyleSheet.create({
   );
   const AppContainer = createAppContainer(AppNavigator);
 
+class CustomFAB extends Component{
+  constructor(){
+    super();
+    this._iconOpacity = new Animated.Value(0);
+
+  }
+  componentWillMount(){
+    Animated.timing(this._iconOpacity, {
+      toValue: 1,
+      duration: 150,
+      easing: Easing.bezier(0.0, 0.0, 0.2, 1)
+    }).start()
+  }
+
+  componentWillDismountMount(){
+    Animated.timing(this._iconOpacity, {
+      toValue: 0,
+      duration: 100,
+      easing: Easing.bezier(0.4, 0.0, 1, 1)
+    }).start()
+  }
+  render(){
+    const fabStyle = {
+      opacity: this._iconOpacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }),
+      transform: [{ scaleX: this._iconOpacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }) }, { scaleY: this._iconOpacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }) }]
+    };
+    return(
+      <FAB
+        style={[styles.fab, fabStyle]}
+        color='white'
+        icon={this.props.icon}
+        onPress={() => this.props.handleFABClick()}
+      />
+    );
+  }
+}
 
 class App extends Component {
 
@@ -121,11 +166,7 @@ class App extends Component {
   }
 
   handleFABClick = () =>{
-    if(this.props.fabScreen == 'home' && this.props.nav !== null  && this.props.nav !== undefined){
-      this._goToNewPad()
-    }else if(this.props.fabScreen == 'detail' && this.props.nav !== null  && this.props.nav !== undefined){
-      this.props.fabFunction();
-    }
+    this.props.fabFunction();
   }
 
   _goToNewPad = () => {
@@ -158,19 +199,7 @@ class App extends Component {
       flexDirection: 'row',
       color: 'black'
     };
-    const fabStyle = {
-      opacity: this._iconOpacity.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      }),
-      transform: [{ scaleX: this._iconOpacity.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      }) }, { scaleY: this._iconOpacity.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      }) }]
-    };
+
 
     return (
       <View style={{ flex: 1 }}>
@@ -191,12 +220,7 @@ class App extends Component {
             }
           }}/>
         {this.props.fabScreen !== null &&
-          <FAB
-            style={[styles.fab]}
-            color='white'
-            icon={icon}
-            onPress={() => this.handleFABClick()}
-          />
+          <CustomFAB icon={icon} handleFABClick={this.handleFABClick}/>
         }
       </View>);
   }
