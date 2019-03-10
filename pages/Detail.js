@@ -13,6 +13,7 @@ import Item from '../components/Item.js';
 import { LISTS_URL, ITEMS_URL } from '../redux/listrUrls.js';
 import { fetchLists } from '../redux/actions/listActions.js';
 import { fetchItems, performItemPost, deleteItem, clearItems } from '../redux/actions/itemActions.js';
+import { changeFABFunction } from '../redux/actions/navActions.js';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,7 +47,8 @@ const styles = StyleSheet.create({
     color: 'white',
     textShadowColor: 'rgba(0, 0, 0, 1)',
     textShadowOffset: {width: -2, height: 2},
-    textShadowRadius: 10
+    textShadowRadius: 10,
+    textAlign: "center"
   },
   card:{
     marginBottom: 16,
@@ -109,6 +111,7 @@ class NewItemCard extends Component {
             multiline
             returnKeyType='done'
             blurOnSubmit={true}
+            onSubmitEditing={() => this.props.performItemPost(this.state.itemName, this.state.itemDesc) }
             style={{backgroundColor: 'white'}}
           />
         </Card.Content>
@@ -131,7 +134,8 @@ class HomeScreen extends Component {
       newItemCardVisible: false,
       itemName: '',
       itemDesc: '',
-      refreshing: false
+      refreshing: false,
+      readOnly: false
     }
     this._visibility = new Animated.Value(0);
     this.didBlur = null;
@@ -143,9 +147,11 @@ class HomeScreen extends Component {
   componentDidMount(){
     const { navigation } = this.props;
     this.setState({ padID: navigation.getParam('static_id', 'NO ID'),
-                    padName: navigation.getParam('name', 'NO PAD AVALIABLE')
+                    padName: navigation.getParam('name', 'NO PAD AVALIABLE'),
+                    readOnly: navigation.getParam('readOnly', false)
                   });
     this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
+    this.props.changeFABFunction(this._toggleNewItemCard);
     this.didBlur = navigation.addListener(
       'didBlur',
       payload => {
@@ -254,7 +260,7 @@ class HomeScreen extends Component {
               {items}
             </ScrollView>
           </Animated.View>
-          <BottomPadNav data={this.state.padID} onFABPress={this._toggleNewItemCard}/>
+          <BottomPadNav data={this.state.padID}/>
         </View>
     );
 
@@ -268,4 +274,4 @@ const mapStateToProps = state => ({
   loading: state.items.loading
 });
 
-export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem, clearItems })(HomeScreen);
+export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem, clearItems, changeFABFunction })(HomeScreen);

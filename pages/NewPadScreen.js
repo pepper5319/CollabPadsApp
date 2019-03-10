@@ -8,6 +8,7 @@ import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 
 import { LISTS_URL } from '../redux/listrUrls.js';
 import { performListPost } from '../redux/actions/listActions.js';
+import { changeFAB } from '../redux/actions/navActions.js';
 
 const styles = StyleSheet.create({
   container: {
@@ -63,6 +64,7 @@ class NewPadScreen extends Component {
   componentDidMount(){
     if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
     }
+    this.props.changeFAB(null);
   }
 
   componentDidUpdate(){
@@ -189,4 +191,4 @@ const mapStateToProps = state => ({
   successfulPost: state.lists.successfulPost
 });
 
-export default connect(mapStateToProps, { performListPost })(NewPadScreen);
+export default connect(mapStateToProps, { performListPost, changeFAB })(NewPadScreen);
