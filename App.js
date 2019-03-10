@@ -13,6 +13,8 @@ import Detail from './pages/Detail.js';
 import Login from './pages/LoginScreen.js';
 import Loading from './pages/LoadingScreen.js';
 import NewPadScreen from './pages/NewPadScreen.js';
+import AccountScreen from './pages/AccountScreen.js';
+import RegisterScreen from './pages/RegisterScreen.js';
 
 const handleCustomTransition = ({ scenes }) => {
   const prevScene = scenes[scenes.length - 2];
@@ -32,7 +34,7 @@ const handleCustomTransition = ({ scenes }) => {
     && nextScene.route.routeName === 'Home') {
     return fadeOut(0);
   }
-  return fromLeft();
+  return fromRight();
 }
 
 const styles = StyleSheet.create({
@@ -64,7 +66,8 @@ const styles = StyleSheet.create({
     {
       Home: HomeScreen,
       Details: Detail,
-      NewPad: NewPadScreen
+      NewPad: NewPadScreen,
+      Account: AccountScreen
     }, {
       headerMode: 'none',
       navigationOptions: {
@@ -79,7 +82,8 @@ const styles = StyleSheet.create({
 
   const AuthStack = createStackNavigator(
     {
-      Login: Login
+      Login: Login,
+      Register: RegisterScreen,
     }, {
       headerMode: 'none',
       navigationOptions: {

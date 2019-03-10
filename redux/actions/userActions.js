@@ -28,7 +28,18 @@ export const setUserToken = (token) => dispatch => {
       payload: token
     });
   }
+}
 
+export const performRegister = (url, userData) => dispatch => {
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(userData)
+  })
+  .then(res => res.json())
+  .then(key => dispatch({type: USER_LOGIN_SUCCESS, payload: key}));
 }
 
 export const getUserData = (url, token) => dispatch => {

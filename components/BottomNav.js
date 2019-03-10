@@ -80,6 +80,11 @@ class BottomNav extends Component {
     );
   }
 
+  onLogout = () => {
+    this.props.performLogout(LOGOUT_URL);
+    this.props.navigator.navigate('Auth');
+  }
+
   render() {
     var minHeight = isIphoneX() ? 50 : 0;
     var maxHeight = isIphoneX() ? 50 : 25;
@@ -114,8 +119,8 @@ class BottomNav extends Component {
       <View>
         <Appbar style={[styles.appbar,  containerStyle]}>
           <Animated.View style={iconStyle}>
-            <Appbar.Action color="black" icon="clear" onPress={() => this.props.performLogout(LOGOUT_URL)} />
-            <Appbar.Action color="black" icon="face" onPress={() => console.log('Pressed mail')} />
+            <Appbar.Action color="black" icon="clear" onPress={() => this.onLogout()} />
+            <Appbar.Action color="black" icon="face" onPress={() => this.props.navigator.navigate('Account')} />
           </Animated.View>
         </Appbar>
       </View>

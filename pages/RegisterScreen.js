@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, ScrollView, Animated, Image, KeyboardAvoidingView} from 'react-native';
-import { LOGIN_URL } from '../redux/listrUrls.js';
+import { REGISTER_URL } from '../redux/listrUrls.js';
 import { connect } from 'react-redux';
 import { FAB, Card, Appbar, TextInput, Button, } from 'react-native-paper';
-import {performLogin} from '../redux/actions/userActions.js';
+import { performRegister } from '../redux/actions/userActions.js';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
 import { noFAB } from '../redux/actions/navActions.js';
@@ -33,25 +33,32 @@ const styles = StyleSheet.create({
   }
 });
 
-class Login extends Component {
+class RegisterScreen extends Component {
   constructor(){
     super();
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      password2: ''
     }
     this._visibility = new Animated.Value(0);
   }
 
-  userLogin = () => {
-    if(this.state.username !== '' && this.state.password !== ''){
+  userRegister = () => {
+    if(this.state.username !== '' && this.state.password !== '' && this.state.password2 !== ''){
       const userData = {
         username: this.state.username,
-        password: this.state.password
+        password1: this.state.password,
+        password2: this.state.password2
       }
-      this.props.performLogin(LOGIN_URL, userData);
-
+      this.props.performRegister(REGISTER_URL, userData);
+      this.setState({username: '',
+        password: '',
+        password2: ''});
+    }else{
+      alert('You must fill out all fields');
     }
+
   }
 
   componentWillMount(){
@@ -108,11 +115,20 @@ class Login extends Component {
               autoCapitalize='none'
               onChangeText={text => this.setState({password: text })}
             />
-          <Button style={styles.login__button} mode="contained" onPress={() => this.userLogin()}>
-              Login
-            </Button>
-            <Button style={styles.login__button} onPress={() => this.props.navigation.navigate('Register')}>
+            <TextInput
+              style={styles.login__input}
+              label='Confirm Password'
+              mode="outlined"
+              value={this.state.password2}
+              secureTextEntry
+              autoCapitalize='none'
+              onChangeText={text => this.setState({password2: text })}
+            />
+            <Button style={styles.login__button} mode="contained" onPress={() => this.userRegister()}>
               Create Account
+            </Button>
+            <Button style={styles.login__button} onPress={() => this.props.navigation.goBack()}>
+              Login
             </Button>
           </View>
         </Animated.View>
@@ -124,4 +140,4 @@ const mapStateToProps = state => ({
   token: state.users.token
 });
 
-export default connect(mapStateToProps, { performLogin, noFAB })(Login);
+export default connect(mapStateToProps, { performRegister, noFAB })(RegisterScreen);
