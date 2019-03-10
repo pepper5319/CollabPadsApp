@@ -98,6 +98,7 @@ class Login extends Component {
               autoCapitalize='none'
               value={this.state.username}
               onChangeText={text => this.setState({username: text})}
+              onSubmitEditing={() => { this.secondTextInput.focus(); }}
             />
             <TextInput
               style={styles.login__input}
@@ -107,6 +108,7 @@ class Login extends Component {
               secureTextEntry
               autoCapitalize='none'
               onChangeText={text => this.setState({password: text })}
+              ref={(input) => { this.secondTextInput = input; }}
             />
           <Button style={styles.login__button} mode="contained" onPress={() => this.userLogin()}>
               Login

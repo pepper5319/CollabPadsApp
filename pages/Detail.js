@@ -86,33 +86,14 @@ class NewItemCard extends Component {
       itemDesc: '',
       itemName: ''
     }
-    this._newCardVisibility = new Animated.Value(0);
-  }
-  componentWillMount(){
-    Animated.timing(this._newCardVisibility, {
-      toValue: 1,
-      duration: 300
-    }).start()
   }
 
-  componentWillDismount(){
-    Animated.timing(this._newCardVisibility, {
-      toValue: 0,
-      duration: 300
-    }).start()
-  }
 
   render(){
 
-    const cardStyle = {
-      opacity: this._newCardVisibility.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      })
-    };
 
     return(
-      <Card style={[styles.card, cardStyle]}>
+      <Card style={[styles.card]}>
         <Card.Content>
           <TextInput
             style={{marginBottom: 10, backgroundColor: 'white'}}
