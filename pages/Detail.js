@@ -47,7 +47,8 @@ const styles = StyleSheet.create({
     color: 'white',
     textShadowColor: 'rgba(0, 0, 0, 1)',
     textShadowOffset: {width: -2, height: 2},
-    textShadowRadius: 10
+    textShadowRadius: 10,
+    textAlign: "center"
   },
   card:{
     marginBottom: 16,
@@ -110,6 +111,7 @@ class NewItemCard extends Component {
             multiline
             returnKeyType='done'
             blurOnSubmit={true}
+            onSubmitEditing={() => this.props.performItemPost(this.state.itemName, this.state.itemDesc) }
             style={{backgroundColor: 'white'}}
           />
         </Card.Content>

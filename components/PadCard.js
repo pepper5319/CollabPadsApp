@@ -49,15 +49,16 @@ class PadCard extends Component {
 
   render(){
     const name = "bgImage" + this.props.data.static_id;
+    const title = (this.props.data.name.length > 23) ? this.props.data.name.substring(0,23) + "..." : this.props.data.name;
     return(
       <Card style={styles.card} onPress={this.props.navigate}>
           <Card.Cover style={{borderTopLeftRadius: 16, borderTopRightRadius: 16}} source={{ uri: 'https://images.unsplash.com/photo-1549526809-d207fdd074e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80' }} />
           {this.props.isShared && <Card.Title
-            title={this.props.data.name}
+            title={title}
             subtitle={this.props.data.owner}
           />}
           {!this.props.isShared && <Card.Title
-            title={this.props.data.name}
+            title={title}
             right={(props) => <IconButton {...props} icon="more-vert" onPress={() => this._showDialog()} />}
           />}
 

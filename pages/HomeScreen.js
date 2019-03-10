@@ -149,7 +149,7 @@ class HomeScreen extends Component {
                 second: SharedPads,
               })}
               onIndexChange={index => this.setState({ index })}
-              initialLayout={{ width: Dimensions.get('window').width }}
+              initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
               renderTabBar={renderTabBar}
             />
             <BottomNav navigator={this.props.navigation}/>
