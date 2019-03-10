@@ -80,6 +80,7 @@ export default function userReducer(state = {token: null, loading: false, userna
           }
 
         }else{
+          console.log(action.payload);
           alert("Something went wrong. Please try again.")
         }
       case USER_LOGOUT_SUCCESS:

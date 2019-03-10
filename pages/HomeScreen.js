@@ -68,11 +68,19 @@ class HomeScreen extends Component {
   componentDidMount(){
     if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
       this.props.fetchLists(LISTS_URL, this.props.token);
+    }else{
+      alert("The account is invalid. Please try logging in again...");
     }
     this.props.setNavigator(this.props.navigation);
   }
 
   _onRefresh = () => {
+    if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
+
+    }else{
+      alert("The account is invalid. Please try logging in again...");
+      this.props.navigation.navigate('Auth');
+    }
     this.setState({refreshing: true});
     this.props.fetchLists(LISTS_URL, this.props.token);
     this.setState({refreshing: this.props.loading});
