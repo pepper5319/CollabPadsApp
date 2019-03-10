@@ -77,10 +77,10 @@ class Item extends Component {
   render(){
     var chipColor = (this.state.isLiked) ? {backgroundColor: '#43a048', textColor: 'white'} : {};
     return(
-        <Card style={styles.card}>
+        <Card style={styles.card} elevation={1}>
           <Card.Content>
             <Title style={{paddingTop: 16}}>{this.props.data.name}</Title>
-            <Paragraph>{this.props.data.description}</Paragraph>
+            {this.props.data.description.length > 0 && <Paragraph>{this.props.data.description}</Paragraph> }
           </Card.Content>
           <Card.Actions>
             <Chip style={[chipColor, {marginRight: 8}]} icon="favorite" onPress={() => this._onLike(this.props.data, this.props.listID)}>{this.props.data.liked_users.length}</Chip>

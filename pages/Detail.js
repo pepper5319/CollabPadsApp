@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, ScrollView, Image, Animated, KeyboardAvoidingView, Keyboard, RefreshControl} from 'react-native';
 import { connect } from 'react-redux';
-import { ifIphoneX } from 'react-native-iphone-x-helper'
+import { ifIphoneX, isIphoneX } from 'react-native-iphone-x-helper'
 import FitImage from 'react-native-fit-image';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 import { Card, Title, Paragraph, Button, TextInput } from 'react-native-paper'
@@ -15,16 +15,18 @@ import { fetchLists } from '../redux/actions/listActions.js';
 import { fetchItems, performItemPost, deleteItem, clearItems } from '../redux/actions/itemActions.js';
 import { changeFABFunction } from '../redux/actions/navActions.js';
 
+const HEADER_MAX_HEIGHT = 300;
+const HEADER_MIN_HEIGHT = (isIphoneX()) ? 100 : 56;
+const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
+
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: '#c8e6c9'
   },
   main: {
-    flex: 1
-  },
-  image: {
-    ...ifIphoneX({maxHeight: 200}, {maxHeight: 200})
+    flex: 1,
+    // backgroundColor: '#c8e6c9'
   },
   item__container: {
     flex: 5
@@ -39,7 +41,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   contentContainer: {
-    ...ifIphoneX({paddingTop: 16}, {paddingTop: 16})
+    paddingTop: HEADER_MAX_HEIGHT - 64
   },
   bg__title:{
     fontSize: 30,
@@ -48,14 +50,33 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 1)',
     textShadowOffset: {width: -2, height: 2},
     textShadowRadius: 10,
-    textAlign: "center"
+    textAlign: "center",
   },
   card:{
     marginBottom: 16,
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 16
-  }
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+    height: HEADER_MAX_HEIGHT,
+
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: null,
+    height: HEADER_MAX_HEIGHT,
+    resizeMode: 'cover',
+  },
 });
 
 class NewItemCard extends Component {
@@ -135,7 +156,8 @@ class HomeScreen extends Component {
       itemName: '',
       itemDesc: '',
       refreshing: false,
-      readOnly: false
+      readOnly: false,
+      scrollY: new Animated.Value(0)
     }
     this._visibility = new Animated.Value(0);
     this.didBlur = null;
@@ -230,6 +252,8 @@ class HomeScreen extends Component {
     const { navigation } = this.props;
     const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
 
+
+
     const containerStyle = {
       opacity: this._visibility.interpolate({
         inputRange: [0, 1],
@@ -237,28 +261,59 @@ class HomeScreen extends Component {
       }),
     };
 
+    const headerTranslate = this.state.scrollY.interpolate({
+      inputRange: [0, HEADER_SCROLL_DISTANCE],
+      outputRange: [0, -HEADER_SCROLL_DISTANCE / 2],
+      extrapolate: 'clamp',
+    });
+
+    const imageOpacity = this.state.scrollY.interpolate({
+      inputRange: [0, HEADER_SCROLL_DISTANCE - (HEADER_SCROLL_DISTANCE/3)],
+      outputRange: [1, 0],
+      extrapolate: 'clamp',
+    });
+    const titleOpacity = this.state.scrollY.interpolate({
+      inputRange: [0, HEADER_SCROLL_DISTANCE/4],
+      outputRange: [1, 0],
+      extrapolate: 'clamp',
+    });
+    const imageTranslate = this.state.scrollY.interpolate({
+      inputRange: [0, HEADER_SCROLL_DISTANCE],
+      outputRange: [0, 100],
+      extrapolate: 'clamp',
+    });
+
     var newCard = ((this.state.newItemCardVisible) ? <NewItemCard performItemPost={this._performItemPost} toggleNewItemCard={this._toggleNewItemCard}/> : null)
     return (
         <View style={styles.container}>
-            <FitImage
-              style={styles.image}
-              source={{ uri: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ' }}
-            >
-            <Animated.View>
-              <Text style={styles.bg__title}>{this.state.padName}</Text>
-            </Animated.View>
-          </FitImage>
-
+          <Animated.View style={[styles.header, {transform: [{ translateY: headerTranslate }], justifyContent: 'center', alignItems: 'center'}]}>
+            <Animated.Image
+              style={[
+                styles.backgroundImage,
+                {opacity: imageOpacity, transform: [{translateY: imageTranslate}]},
+              ]}
+              source={{uri: 'https://images.unsplash.com/photo-1549526809-d207fdd074e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80'}}
+              />
+            <Animated.Text style={[styles.bg__title, {opacity: titleOpacity}]}>{this.state.padName}</Animated.Text>
+          </Animated.View>
           <Animated.View style={[styles.main, containerStyle]}>
-            <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer} refreshControl={
+            <Animated.ScrollView
+              style={styles.main}
+              contentContainerStyle={styles.contentContainer}
+              refreshControl={
                 <RefreshControl
                   refreshing={this.state.refreshing}
                   onRefresh={this._onRefresh}
                 />
-              }>
+              }
+              scrollEventThrottle={16}
+              onScroll={Animated.event(
+                [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+                { useNativeDriver: true },
+              )}>
               {newCard}
               {items}
-            </ScrollView>
+            </Animated.ScrollView>
           </Animated.View>
           <BottomPadNav data={this.state.padID}/>
         </View>
