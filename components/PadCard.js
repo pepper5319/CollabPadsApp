@@ -4,6 +4,12 @@ import { Avatar, Button, Card, Title, Paragraph, IconButton, Portal, Dialog, Tex
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import PadDialog from './PadDialog.js';
+import UnfollowDialog from './UnfollowDialog.js';
+
+import { connect } from 'react-redux';
+import { USER_URL, LISTS_URL } from '../redux/listrUrls.js';
+import { addCollab } from '../redux/actions/listActions.js';
+
 
 const styles = StyleSheet.create({
   card:{
@@ -36,7 +42,8 @@ class PadCard extends Component {
 
   state = {
     visible: false,
-    isShared: false
+    isShared: false,
+    collabs: []
   };
 
   componentDidMount(props){
@@ -49,24 +56,30 @@ class PadCard extends Component {
 
   render(){
     const name = "bgImage" + this.props.data.static_id;
-    const title = (this.props.data.name.length > 23) ? this.props.data.name.substring(0,23) + "..." : this.props.data.name;
+    const title = (this.props.data.name.length > 21) ? this.props.data.name.substring(0,21) + "..." : this.props.data.name;
     return(
       <Card style={styles.card} onPress={this.props.navigate}>
           <Card.Cover style={{borderTopLeftRadius: 16, borderTopRightRadius: 16}} source={{ uri: 'https://images.unsplash.com/photo-1549526809-d207fdd074e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80' }} />
           {this.props.isShared && <Card.Title
             title={title}
             subtitle={this.props.data.owner}
+            right={(props) => <IconButton {...props} icon="block" onPress={() => this._showDialog()} />}
           />}
           {!this.props.isShared && <Card.Title
             title={title}
             right={(props) => <IconButton {...props} icon="more-vert" onPress={() => this._showDialog()} />}
           />}
 
-          {this.state.visible === true && <PadDialog isVisible={this.state.visible} hideDialog={this._hideDialog} data={this.props.data}/>}
+          {this.state.visible === true && this.props.isShared !== true && <PadDialog isVisible={this.state.visible} hideDialog={this._hideDialog} data={this.props.data}/>}
+          {this.state.visible === true && this.props.isShared === true && <UnfollowDialog isVisible={this.state.visible} hideDialog={this._hideDialog} data={this.props.data}/>}
       </Card>
     );
   }
 }
 
 
-export default PadCard;
+const mapStateToProps = state => ({
+  token: state.users.token,
+});
+
+export default connect(mapStateToProps, { addCollab })(PadCard);

@@ -15,7 +15,8 @@ export default function navReducer(state = {fab: null, nav: null, fabFunction: n
       case NO_FAB:
         return {
           ...state,
-          fab: null
+          fab: null,
+          fabFunction: null
         }
       case SET_NAVIGATOR:
         return {

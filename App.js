@@ -114,7 +114,7 @@ class CustomFAB extends Component{
     }).start()
   }
 
-  componentWillDismountMount(){
+  componentWillDismount(){
     Animated.timing(this._iconOpacity, {
       toValue: 0,
       duration: 100,
@@ -213,7 +213,7 @@ class App extends Component {
                 this.props.changeFAB('home');
               }
               else if(currentScreen == 'Details'){
-                this.props.changeFAB('detail');
+                // this.props.changeFAB('detail');
               }else{
 
               }
