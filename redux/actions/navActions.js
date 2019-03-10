@@ -14,6 +14,12 @@ export const changeFABFunction = (func) => dispatch => {
   });
 }
 
+export const noFAB = () => dispatch => {
+  dispatch({
+    type: NO_FAB
+  });
+}
+
 export const setNavigator = (navigator) => dispatch => {
   if(navigator !== null && navigator !== undefined){
     dispatch({

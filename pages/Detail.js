@@ -13,7 +13,7 @@ import Item from '../components/Item.js';
 import { LISTS_URL, ITEMS_URL } from '../redux/listrUrls.js';
 import { fetchLists } from '../redux/actions/listActions.js';
 import { fetchItems, performItemPost, deleteItem, clearItems } from '../redux/actions/itemActions.js';
-import { changeFABFunction } from '../redux/actions/navActions.js';
+import { changeFABFunction, changeFAB, noFAB } from '../redux/actions/navActions.js';
 
 const HEADER_MAX_HEIGHT = 300;
 const HEADER_MIN_HEIGHT = (isIphoneX()) ? 100 : 56;
@@ -173,7 +173,6 @@ class HomeScreen extends Component {
                     readOnly: navigation.getParam('readOnly', false)
                   });
     this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
-    this.props.changeFABFunction(this._toggleNewItemCard);
     this.didBlur = navigation.addListener(
       'didBlur',
       payload => {
@@ -187,6 +186,13 @@ class HomeScreen extends Component {
   }
 
   componentDidUpdate(){
+    if(this.state.readOnly === true){
+      console.log("READ ONLY");
+      this.props.noFAB();
+    }else{
+      this.props.changeFABFunction(this._toggleNewItemCard);
+      this.props.changeFAB('details');
+    }
     if(this.props.items !== null && this.props.items !== undefined && this.props.items.length >= 0){
       Animated.timing(this._visibility, {
         toValue: 1,
@@ -329,4 +335,4 @@ const mapStateToProps = state => ({
   loading: state.items.loading
 });
 
-export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem, clearItems, changeFABFunction })(HomeScreen);
+export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem, clearItems, changeFABFunction, changeFAB, noFAB })(HomeScreen);
