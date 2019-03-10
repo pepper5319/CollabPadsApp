@@ -163,7 +163,7 @@ class PadDialog extends Component {
               value={this.state.padName}
               mode='outlined'
               onChangeText={padName => this.setState({ padName })}
-              style={{marginBottom: 10}}
+              style={{marginBottom: 10, backgroundColor: 'white'}}
               onSubmitEditing={() => { this.secondTextInput.focus(); }}
             />
             <TextInput
@@ -175,7 +175,7 @@ class PadDialog extends Component {
               onSubmitEditing={() => this.addCollabs()}
               ref={(input) => { this.secondTextInput = input; }}
               returnKeyType='done'
-              style={{marginBottom: 10}}
+              style={{marginBottom: 10, backgroundColor: 'white'}}
             />
           <ScrollView contentContainerStyle={{flexGrow: 1}}>
             <View style={[styles.collab__list]}>
