@@ -247,7 +247,7 @@ class HomeScreen extends Component {
   render() {
     try {
     var items = this.props.items.map((item) => (
-      <Item key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem}/>
+      <Item key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem} readOnly={this.state.readOnly}/>
     ));
     }catch(error){
       console.log(error);
@@ -256,8 +256,6 @@ class HomeScreen extends Component {
     }
     const { navigation } = this.props;
     const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
-
-
 
     const containerStyle = {
       opacity: this._visibility.interpolate({

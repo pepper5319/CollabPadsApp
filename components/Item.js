@@ -84,7 +84,7 @@ class Item extends Component {
           </Card.Content>
           <Card.Actions>
             <Chip style={[chipColor, {marginRight: 8}]} icon="favorite" onPress={() => this._onLike(this.props.data, this.props.listID)}>{this.props.data.liked_users.length}</Chip>
-            <Button onPress={(e) => this.props.onRemove(e, this.props.data.static_id, this.props.listID)}>Remove</Button>
+            {this.props.readOnly === false && <Button onPress={(e) => this.props.onRemove(e, this.props.data.static_id, this.props.listID)}>Remove</Button>}
           </Card.Actions>
         </Card>
     );

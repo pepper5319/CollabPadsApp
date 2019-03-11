@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl, Dimensions} from 'react-native';
-import { FAB, Card, Appbar } from 'react-native-paper';
+import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl, Dimensions, Image} from 'react-native';
+import { FAB, Card, Appbar, Banner, Avatar } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 import PadCard from '../components/PadCard.js';
 import BottomNav from '../components/BottomNav.js';
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   contentContainer: {
-    ...ifIphoneX({paddingTop: 48}, {paddingTop: 30})
+    ...ifIphoneX({paddingTop: 48})
   }
 });
 
@@ -51,8 +51,8 @@ class HomeScreen extends Component {
       refreshing: false,
       index: 0,
       routes: [
-        { key: 'first', title: 'First' },
-        { key: 'second', title: 'Second' },
+        { key: 'first', title: 'My Pads' },
+        { key: 'second', title: 'Collab Pads' },
       ],
     }
     this._visibility = new Animated.Value(0);
@@ -112,7 +112,7 @@ class HomeScreen extends Component {
       <View style={styles.container}>
         <Animated.View style={containerStyle}>
 
-        <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
+        <ScrollView style={styles.main} contentContainerStyle={{paddingTop: 16}}
             refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -120,7 +120,22 @@ class HomeScreen extends Component {
             />
           }>
           <View>
-            {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
+            {pads.length <= 0 &&
+              <Banner
+                visible={pads.length <= 0}
+                actions={[
+                  {
+                    label: 'Create Pad',
+                    onPress: () => this.props.fabFunction(),
+                  },
+                ]}
+                image={({ size }) =>
+                  <Avatar.Icon size={size} icon="view-list" />
+                }
+              >
+                You don't have any pads. Try making one now!
+              </Banner>
+            }
             {pads}
           </View>
         </ScrollView>
@@ -130,8 +145,7 @@ class HomeScreen extends Component {
     const SharedPads = () => (
       <View style={styles.container}>
         <Animated.View style={containerStyle}>
-        {sharedPads.length <= 0 && <View style={styles.no__pads}><Text>No Collab Pads</Text></View>}
-        <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
+        <ScrollView style={styles.main} contentContainerStyle={{paddingTop: 16}}
             refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -139,6 +153,19 @@ class HomeScreen extends Component {
             />
           }>
           <View>
+            {sharedPads.length <= 0 &&
+              <Banner
+                visible={sharedPads.length <= 0}
+                actions={[
+
+                ]}
+                image={({ size }) =>
+                  <Avatar.Icon size={size} icon="group" />
+                }
+              >
+                No one has added you as a collaborator to their pads.
+              </Banner>
+            }
             {sharedPads}
           </View>
         </ScrollView>
@@ -146,7 +173,10 @@ class HomeScreen extends Component {
       </View>
     );
 
-    const renderTabBar = () => null;
+    const renderTabBar = (props) => <TabBar {...props}
+                                      indicatorStyle={{ backgroundColor: '#43a048' }}
+                                      labelStyle={{color: 'black'}}
+                                      style={[styles.contentContainer, { backgroundColor: 'white', textColor: 'black'}]}/>;
 
     return (
         <View style={styles.container}>
@@ -174,6 +204,7 @@ const mapStateToProps = state => ({
   data: state.lists.data,
   sharedData: state.lists.sharedData,
   loading: state.lists.loading,
+  fabFunction: state.nav.fabFunction
 });
 
 export default connect(mapStateToProps, { fetchLists, setNavigator })(HomeScreen);
