@@ -15,6 +15,7 @@ import Loading from './pages/LoadingScreen.js';
 import NewPadScreen from './pages/NewPadScreen.js';
 import AccountScreen from './pages/AccountScreen.js';
 import RegisterScreen from './pages/RegisterScreen.js';
+import QuickPad from './pages/QuickPad.js';
 
 const handleCustomTransition = ({ scenes }) => {
   const prevScene = scenes[scenes.length - 2];
@@ -97,11 +98,17 @@ const styles = StyleSheet.create({
     {
       Loading: Loading,
       Auth: AuthStack,
+      QuickPad:
+      { screen: QuickPad,
+        path: 'quickpad/:id'
+      },
       App: MainStack
     },{
       initialRouteName: 'Loading'
     }
   );
+
+  const prefix = 'collabpads://';
   const AppContainer = createAppContainer(AppNavigator);
 
 class CustomFAB extends Component{
@@ -209,6 +216,7 @@ class App extends Component {
       <View style={{ flex: 1 }}>
         <AppContainer
           ref={(r) => { this.navigatorRef = r; }}
+          uriPrefix={prefix}
           onNavigationStateChange={(prevState, currentState) => {
             const currentScreen = this.getActiveRouteName(currentState);
             const prevScreen = this.getActiveRouteName(prevState);

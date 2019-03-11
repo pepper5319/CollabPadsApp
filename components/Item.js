@@ -4,7 +4,7 @@ import { Avatar, Button, Card, Title, Paragraph, IconButton, Chip } from 'react-
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 import { USER_URL, ITEMS_URL } from '../redux/listrUrls.js';
 import {connect} from 'react-redux';
-import { likeItem } from '../redux/actions/itemActions.js';
+import { likeItem, likeQuickItem } from '../redux/actions/itemActions.js';
 
 
 const styles = StyleSheet.create({
@@ -51,27 +51,34 @@ class Item extends Component {
   }
 
   _onLike = (itemData, listID) => {
-    fetch(USER_URL, {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'Authorization': 'Token ' + this.props.token,
-      },
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data.username){
-        var index = itemData.liked_users.indexOf(data.username);
-        if (index > -1) {
-          itemData.liked_users = [];
-          this.setState({ isLiked: false });
-        }else{
-          itemData.liked_users.push(data.username);
-          this.setState({ isLiked: true });
+    if(this.props.guest !== undefined){
+      const likeData = {"liked_guests": itemData.liked_guests + 1, "static_id": itemData.static_id};
+      this.props.likeQuickItem(ITEMS_URL, likeData, listID, this.props.guest);
+      this.setState({ isLiked: true });
+    }else{
+      fetch(USER_URL, {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': 'Token ' + this.props.token,
+        },
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.username){
+          var index = itemData.liked_users.indexOf(data.username);
+          if (index > -1) {
+            itemData.liked_users = [];
+            this.setState({ isLiked: false });
+          }else{
+            itemData.liked_users.push(data.username);
+            this.setState({ isLiked: true });
+          }
+          this.props.likeItem(ITEMS_URL, itemData, listID, this.props.token);
         }
-        this.props.likeItem(ITEMS_URL, itemData, listID, this.props.token);
-      }
-    });
+      });
+    }
+
   }
 
   render(){
@@ -83,7 +90,7 @@ class Item extends Component {
             {this.props.data.description.length > 0 && <Paragraph>{this.props.data.description}</Paragraph> }
           </Card.Content>
           <Card.Actions>
-            <Chip style={[chipColor, {marginRight: 8}]} icon="favorite" onPress={() => this._onLike(this.props.data, this.props.listID)}>{this.props.data.liked_users.length}</Chip>
+            <Chip style={[chipColor, {marginRight: 8}]} icon="favorite" onPress={() => this._onLike(this.props.data, this.props.listID)}>{this.props.data.liked_users.length + this.props.data.liked_guests}</Chip>
             {this.props.readOnly === false && <Button onPress={(e) => this.props.onRemove(e, this.props.data.static_id, this.props.listID)}>Remove</Button>}
           </Card.Actions>
         </Card>
@@ -95,4 +102,4 @@ const mapStateToProps = state => ({
   token: state.users.token
 });
 
-export default connect(mapStateToProps, { likeItem })(Item);
+export default connect(mapStateToProps, { likeItem, likeQuickItem })(Item);

@@ -44,7 +44,8 @@ class Loading extends Component {
         this.props.setUserToken(tok);
         this.props.navigation.navigate('App');
       }else{
-        this.props.navigation.navigate('Auth');
+        // this.props.navigation.navigate('Auth');
+        this.props.navigation.navigate('QuickPad');
       }
     });
   }
