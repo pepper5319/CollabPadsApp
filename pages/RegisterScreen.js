@@ -105,6 +105,7 @@ class RegisterScreen extends Component {
               autoCapitalize='none'
               value={this.state.username}
               onChangeText={text => this.setState({username: text})}
+              onSubmitEditing={() => { this.secondTextInput.focus(); }}
             />
             <TextInput
               style={styles.login__input}
@@ -114,6 +115,8 @@ class RegisterScreen extends Component {
               secureTextEntry
               autoCapitalize='none'
               onChangeText={text => this.setState({password: text })}
+              onSubmitEditing={() => { this.thirdTextInput.focus(); }}
+              ref={(input) => { this.secondTextInput = input; }}
             />
             <TextInput
               style={styles.login__input}
@@ -123,6 +126,7 @@ class RegisterScreen extends Component {
               secureTextEntry
               autoCapitalize='none'
               onChangeText={text => this.setState({password2: text })}
+              ref={(input) => { this.thirdTextInput = input; }}
             />
             <Button style={styles.login__button} mode="contained" onPress={() => this.userRegister()}>
               Create Account

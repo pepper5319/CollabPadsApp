@@ -86,33 +86,14 @@ class NewItemCard extends Component {
       itemDesc: '',
       itemName: ''
     }
-    this._newCardVisibility = new Animated.Value(0);
-  }
-  componentWillMount(){
-    Animated.timing(this._newCardVisibility, {
-      toValue: 1,
-      duration: 300
-    }).start()
   }
 
-  componentWillDismount(){
-    Animated.timing(this._newCardVisibility, {
-      toValue: 0,
-      duration: 300
-    }).start()
-  }
 
   render(){
 
-    const cardStyle = {
-      opacity: this._newCardVisibility.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      })
-    };
 
     return(
-      <Card style={[styles.card, cardStyle]}>
+      <Card style={[styles.card]}>
         <Card.Content>
           <TextInput
             style={{marginBottom: 10, backgroundColor: 'white'}}
@@ -152,6 +133,9 @@ class HomeScreen extends Component {
     this.state = {
       padID: null,
       padName: null,
+      padBgUrl: 'https://images.unsplash.com/3/doctype-hi-res.jpg?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ',
+      padBgOwner: 'Aleks Dorohovich',
+      padBgOwnerUrl: 'https://unsplash.com/@aleksdorohovich',
       newItemCardVisible: false,
       itemName: '',
       itemDesc: '',
@@ -170,8 +154,15 @@ class HomeScreen extends Component {
     const { navigation } = this.props;
     this.setState({ padID: navigation.getParam('static_id', 'NO ID'),
                     padName: navigation.getParam('name', 'NO PAD AVALIABLE'),
+                    padBgUrl: navigation.getParam('background_image_url', null),
+                    padBgOwner: navigation.getParam('background_image_url', null),
+                    padBgOwnerUrl: navigation.getParam('background_image_url', null),
                     readOnly: navigation.getParam('readOnly', false)
                   });
+    if(navigation.getParam('background_image_url', null) === ''){ this.setState({padBgUrl: 'https://images.unsplash.com/3/doctype-hi-res.jpg?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ'})}
+    if(navigation.getParam('background_image_owner', null) === ''){ this.setState({padBgOwner: 'Aleks Dorohovich'})}
+    if(navigation.getParam('background_image_owner_url', null) === ''){ this.setState({padBgOwnerUrl: 'https://unsplash.com/@aleksdorohovich'})}
+
     this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
     this.didBlur = navigation.addListener(
       'didBlur',
@@ -198,6 +189,8 @@ class HomeScreen extends Component {
         toValue: 1,
         duration: 300,
       }).start();
+    }else if(!(this.props.items !== null && this.props.items !== undefined)){
+      this.props.navigation.goBack();
     }
   }
 
@@ -252,13 +245,17 @@ class HomeScreen extends Component {
   }
 
   render() {
+    try {
     var items = this.props.items.map((item) => (
-      <Item key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem}/>
+      <Item key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem} readOnly={this.state.readOnly}/>
     ));
+    }catch(error){
+      console.log(error);
+      this.props.fetchLists(LISTS_URL, this.props.token);
+      this.props.navigation.goBack();
+    }
     const { navigation } = this.props;
     const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
-
-
 
     const containerStyle = {
       opacity: this._visibility.interpolate({
@@ -298,7 +295,7 @@ class HomeScreen extends Component {
                 styles.backgroundImage,
                 {opacity: imageOpacity, transform: [{translateY: imageTranslate}]},
               ]}
-              source={{uri: 'https://images.unsplash.com/photo-1549526809-d207fdd074e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80'}}
+              source={{uri: this.state.padBgUrl}}
               />
             <Animated.Text style={[styles.bg__title, {opacity: titleOpacity}]}>{this.state.padName}</Animated.Text>
           </Animated.View>
@@ -335,4 +332,4 @@ const mapStateToProps = state => ({
   loading: state.items.loading
 });
 
-export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem, clearItems, changeFABFunction, changeFAB, noFAB })(HomeScreen);
+export default connect(mapStateToProps, { fetchLists, fetchItems, performItemPost, deleteItem, clearItems, changeFABFunction, changeFAB, noFAB })(HomeScreen);

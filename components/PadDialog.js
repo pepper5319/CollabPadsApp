@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ScrollView, Dimensions, Animated, KeyboardAvoidingView, BackHandler} from 'react-native';
+import {Platform, StyleSheet, Text, View, ScrollView, Dimensions, Animated, KeyboardAvoidingView, BackHandler, Linking, TouchableOpacity} from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, IconButton, Portal, Dialog, TextInput, Chip, Switch, Subheading, Headline } from 'react-native-paper';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
     ...ifIphoneX({paddingTop: 48}, {paddingTop: 30})
   },
   dialog__actions:{
-    flex: 1,
     flexDirection: 'row',
     alignItems:'flex-end',
     ...ifIphoneX({marginBottom: 24}, {marginBottom: 16})
@@ -156,14 +155,28 @@ class PadDialog extends Component {
           style={[containerStyle, {flex: 1, marginLeft: 0, width: Dimensions.get('window').width, minHeight: Dimensions.get('window').height}]}
           visible={this.props.isVisible}
           onDismiss={this.props.hideDialog}>
-          <View style={{flex: 3, padding: 16}}>
-          <Dialog.Title style={styles.dialog__title}>Manage Pad: {this.props.data.name}</Dialog.Title>
+          <ScrollView style={[styles.dialog__title, {flex: 3, padding: 16}]} contentContainerStyle={{paddingBottom: 20}}>
+
+          <KeyboardAvoidingView behavior="padding">
+            {this.props.data.background_image_url !== undefined && this.props.data.background_image_url !== '' &&
+            <TouchableOpacity onPress={() => Linking.openURL(this.props.data.background_image_owner_url)}>
+              <Card.Cover  style={{borderRadius: 16}} source={{ uri: this.props.data.background_image_url }} />
+              <Text style={{fontWeight: '200', alignSelf: 'center'}}>Photo by {this.props.data.background_image_owner} on Unsplash.</Text>
+            </TouchableOpacity>
+            }
+            {this.props.data.background_image_url === null || this.props.data.background_image_url === undefined || this.props.data.background_image_url === '' &&
+              <TouchableOpacity style={{justifyContent: 'center'}} onPress={() => Linking.openURL('https://unsplash.com/@aleksdorohovich')}>
+                <Card.Cover style={{borderRadius: 16}} source={{ uri: 'https://images.unsplash.com/3/doctype-hi-res.jpg?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ' }} />
+                <Text style={{fontWeight: '200', alignSelf: 'center'}}>Photo by Aleks Dorohovich on Unsplash.</Text>
+              </TouchableOpacity>
+            }
+          <Dialog.Title>Manage Pad: {this.props.data.name}</Dialog.Title>
             <TextInput
               label='Name of Pad'
               value={this.state.padName}
               mode='outlined'
               onChangeText={padName => this.setState({ padName })}
-              style={{marginBottom: 10}}
+              style={{marginBottom: 10, backgroundColor: 'white'}}
               onSubmitEditing={() => { this.secondTextInput.focus(); }}
             />
             <TextInput
@@ -175,15 +188,15 @@ class PadDialog extends Component {
               onSubmitEditing={() => this.addCollabs()}
               ref={(input) => { this.secondTextInput = input; }}
               returnKeyType='done'
-              style={{marginBottom: 10}}
+              style={{marginBottom: 10, backgroundColor: 'white'}}
             />
-          <ScrollView contentContainerStyle={{flexGrow: 1}}>
-            <View style={[styles.collab__list]}>
-              {collabs}
-            </View>
-          </ScrollView>
+          <ScrollView style={{maxHeight: 100}} contentContainerStyle={{flexGrow: 1}}>
+              <View style={[styles.collab__list]}>
+                {collabs}
+              </View>
+            </ScrollView>
 
-            <KeyboardAvoidingView>
+            <View style={{flex: 1}}>
             <View style={{flexDirection: 'row', marginBottom: 16}}>
               <Switch
                 value={this.state.readOnly}
@@ -224,9 +237,10 @@ class PadDialog extends Component {
               </Dialog>
             </Portal>
             }
-          </KeyboardAvoidingView>
           </View>
-          <Dialog.Actions style={styles.dialog__actions}>
+        </KeyboardAvoidingView>
+        </ScrollView>
+          <Dialog.Actions style={[styles.dialog__actions]}>
             <Button onPress={this.props.hideDialog}>Close</Button>
           </Dialog.Actions>
         </Dialog>

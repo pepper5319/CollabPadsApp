@@ -148,7 +148,7 @@ class NewPadScreen extends Component {
               value={this.state.padName}
               mode='outlined'
               onChangeText={padName => this.setState({ padName })}
-              style={{marginBottom: 10}}
+              style={{marginBottom: 10, backgroundColor: 'white'}}
               onSubmitEditing={() => { this.secondTextInput.focus(); }}
             />
             <TextInput
@@ -160,6 +160,7 @@ class NewPadScreen extends Component {
               onSubmitEditing={() => this.addCollab()}
               ref={(input) => { this.secondTextInput = input; }}
               returnKeyType='done'
+              style={{backgroundColor: 'white'}}
 
             />
             <View style={styles.collab__list}>
