@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   no__pads: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   bottom__bar: {
@@ -111,7 +111,8 @@ class HomeScreen extends Component {
     const MyPads = () => (
       <View style={styles.container}>
         <Animated.View style={containerStyle}>
-        {pads.length > 0 && <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
+
+        <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
             refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -119,17 +120,18 @@ class HomeScreen extends Component {
             />
           }>
           <View>
+            {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
             {pads}
           </View>
-        </ScrollView>}
-        {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
+        </ScrollView>
         </Animated.View>
       </View>
     );
     const SharedPads = () => (
       <View style={styles.container}>
         <Animated.View style={containerStyle}>
-        {pads.length > 0 && <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
+        {sharedPads.length <= 0 && <View style={styles.no__pads}><Text>No Collab Pads</Text></View>}
+        <ScrollView style={styles.main} contentContainerStyle={styles.contentContainer}
             refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -139,8 +141,7 @@ class HomeScreen extends Component {
           <View>
             {sharedPads}
           </View>
-        </ScrollView>}
-        {pads.length <= 0 && <View style={styles.no__pads}><Text>No Pads</Text></View>}
+        </ScrollView>
         </Animated.View>
       </View>
     );

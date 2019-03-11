@@ -189,6 +189,8 @@ class HomeScreen extends Component {
         toValue: 1,
         duration: 300,
       }).start();
+    }else if(!(this.props.items !== null && this.props.items !== undefined)){
+      this.props.navigation.goBack();
     }
   }
 
@@ -243,9 +245,15 @@ class HomeScreen extends Component {
   }
 
   render() {
+    try {
     var items = this.props.items.map((item) => (
       <Item key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem}/>
     ));
+    }catch(error){
+      console.log(error);
+      this.props.fetchLists(LISTS_URL, this.props.token);
+      this.props.navigation.goBack();
+    }
     const { navigation } = this.props;
     const name = "bgImage" + navigation.getParam('static_id', 'NO ID');
 
@@ -326,4 +334,4 @@ const mapStateToProps = state => ({
   loading: state.items.loading
 });
 
-export default connect(mapStateToProps, { fetchItems, performItemPost, deleteItem, clearItems, changeFABFunction, changeFAB, noFAB })(HomeScreen);
+export default connect(mapStateToProps, { fetchLists, fetchItems, performItemPost, deleteItem, clearItems, changeFABFunction, changeFAB, noFAB })(HomeScreen);
