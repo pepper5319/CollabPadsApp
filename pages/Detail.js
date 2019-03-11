@@ -133,6 +133,9 @@ class HomeScreen extends Component {
     this.state = {
       padID: null,
       padName: null,
+      padBgUrl: 'https://images.unsplash.com/3/doctype-hi-res.jpg?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ',
+      padBgOwner: 'Aleks Dorohovich',
+      padBgOwnerUrl: 'https://unsplash.com/@aleksdorohovich',
       newItemCardVisible: false,
       itemName: '',
       itemDesc: '',
@@ -151,8 +154,15 @@ class HomeScreen extends Component {
     const { navigation } = this.props;
     this.setState({ padID: navigation.getParam('static_id', 'NO ID'),
                     padName: navigation.getParam('name', 'NO PAD AVALIABLE'),
+                    padBgUrl: navigation.getParam('background_image_url', null),
+                    padBgOwner: navigation.getParam('background_image_url', null),
+                    padBgOwnerUrl: navigation.getParam('background_image_url', null),
                     readOnly: navigation.getParam('readOnly', false)
                   });
+    if(navigation.getParam('background_image_url', null) === ''){ this.setState({padBgUrl: 'https://images.unsplash.com/3/doctype-hi-res.jpg?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ'})}
+    if(navigation.getParam('background_image_owner', null) === ''){ this.setState({padBgOwner: 'Aleks Dorohovich'})}
+    if(navigation.getParam('background_image_owner_url', null) === ''){ this.setState({padBgOwnerUrl: 'https://unsplash.com/@aleksdorohovich'})}
+
     this.props.fetchItems(ITEMS_URL, navigation.getParam('static_id', 'NO ID'), this.props.token);
     this.didBlur = navigation.addListener(
       'didBlur',
@@ -279,7 +289,7 @@ class HomeScreen extends Component {
                 styles.backgroundImage,
                 {opacity: imageOpacity, transform: [{translateY: imageTranslate}]},
               ]}
-              source={{uri: 'https://images.unsplash.com/photo-1549526809-d207fdd074e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80'}}
+              source={{uri: this.state.padBgUrl}}
               />
             <Animated.Text style={[styles.bg__title, {opacity: titleOpacity}]}>{this.state.padName}</Animated.Text>
           </Animated.View>
