@@ -47,7 +47,7 @@ export const fetchSingleList = (url, listId, token) => dispatch =>{
       if(res.status === 200){
         return res.json();
       }else{
-        dispatch(performLogout(LOGOUT_URL));
+        // console.log(rest.)
       }
     })
     .then(data => {

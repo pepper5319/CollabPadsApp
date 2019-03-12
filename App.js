@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, AsyncStorage, Dimensions, Animated, Easing} from 'react-native';
+import {Platform, StyleSheet, Text, View, AsyncStorage, Dimensions, Animated, Easing, Linking} from 'react-native';
 import {connect} from 'react-redux';
 import {createStackNavigator, createAppContainer, createSwitchNavigator} from "react-navigation";
 import { ifIphoneX, isIphoneX } from 'react-native-iphone-x-helper'
@@ -125,6 +125,7 @@ class CustomFAB extends Component{
     }).start()
   }
 
+
   componentWillDismount(){
     Animated.timing(this._iconOpacity, {
       toValue: 0,
@@ -170,6 +171,16 @@ class App extends Component {
   }
 
   componentWillMount() {
+    Linking.addEventListener('url', this._handleOpenURL);
+  }
+
+
+  _handleOpenURL = (event) => {
+    const route = event.url.replace(/.*?:\/\//g, '');
+    const id = route.match(/\/([^\/]+)\/?$/)[1];
+    const data = {pad_id: id};
+    console.log(id);
+    this.props.nav.navigate('QuickPad', data);
   }
 
   componentDidMount() {
@@ -182,6 +193,11 @@ class App extends Component {
 
   _goToNewPad = () => {
     this.props.nav.navigate("NewPad");
+  }
+
+  componentWillDismount = () => {
+
+    Linking.removeEventListener('url', this._handleOpenURL);
   }
 
 

@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, Animated} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, Animated, Linking} from 'react-native';
 import { connect } from 'react-redux';
 import { StackActions, NavigationActions } from 'react-navigation';
 import {performLogin, setUserToken} from '../redux/actions/userActions.js';
 import {AsyncStorage} from 'react-native';
+import { setNavigator } from '../redux/actions/navActions.js';
 
 
 const styles = StyleSheet.create({
@@ -29,11 +30,13 @@ class Loading extends Component {
 
   constructor(){
     super();
-    this.checkIfLoggedIn();
+
   }
 
   componentDidMount(){
     // Remove the listener when you are done
+    this.checkIfLoggedIn();
+    this.props.setNavigator(this.props.navigation);
   }
 
   checkIfLoggedIn = () => {
@@ -42,10 +45,30 @@ class Loading extends Component {
       console.log(tok);
       if (tok !== null && tok !== undefined && tok !== '') {
         this.props.setUserToken(tok);
-        this.props.navigation.navigate('App');
+        Linking.getInitialURL().then((url) => {
+          if (url) {
+            const route = url.replace(/.*?:\/\//g, '');
+            const id = route.match(/\/([^\/]+)\/?$/)[1];
+            const data = {pad_id: id};
+            console.log(id);
+            this.props.navigation.navigate('QuickPad', data);
+          }else{
+            this.props.navigation.navigate('App');
+          }
+        }).catch(err => console.error('An error occurred', err));
       }else{
-        // this.props.navigation.navigate('Auth');
-        this.props.navigation.navigate('QuickPad');
+        Linking.getInitialURL().then((url) => {
+          if (url) {
+            const route = url.replace(/.*?:\/\//g, '');
+            const id = route.match(/\/([^\/]+)\/?$/)[1];
+            const data = {pad_id: id};
+            console.log(id);
+            this.props.navigation.navigate('QuickPad', data);
+          }else{
+            this.props.navigation.navigate('Auth');
+          }
+        }).catch(err => console.error('An error occurred', err));
+        // this.props.navigation.navigate('QuickPad');
       }
     });
   }
@@ -65,4 +88,4 @@ const mapStateToProps = state => ({
   token: state.users.token,
 });
 
-export default connect(mapStateToProps, { setUserToken })(Loading);
+export default connect(mapStateToProps, { setUserToken, setNavigator })(Loading);

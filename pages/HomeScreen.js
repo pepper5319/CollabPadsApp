@@ -13,7 +13,6 @@ import BottomNav from '../components/BottomNav.js';
 import { LISTS_URL, USER_URL } from '../redux/listrUrls.js';
 import { fetchLists } from '../redux/actions/listActions.js';
 import { getUserData } from '../redux/actions/userActions.js';
-import { setNavigator } from '../redux/actions/navActions.js';
 
 
 const styles = StyleSheet.create({
@@ -71,7 +70,7 @@ class HomeScreen extends Component {
     }else{
       alert("The account is invalid. Please try logging in again...");
     }
-    this.props.setNavigator(this.props.navigation);
+
   }
 
   _onRefresh = () => {
@@ -92,6 +91,10 @@ class HomeScreen extends Component {
 
   render() {
     // Remove the listener when you are done
+    var pads = []
+    var sharedPads = []
+    if(this.props.data !== undefined){ pads = this.props.data; }
+    if(this.props.sharedData !== undefined){ sharedPads = this.props.sharedData; }
     const containerStyle = {
       flex: 1,
       opacity: this._visibility.interpolate({
@@ -99,15 +102,12 @@ class HomeScreen extends Component {
         outputRange: [0, 1],
       })
     };
-
-    var pads = this.props.data.map((pad) => (
+      var pads = pads.map((pad) => (
         <PadCard key={pad.static_id} data={pad} navigate={() => this._goToDetail(pad)} />
       ));
-
-    var sharedPads = this.props.sharedData.map((pad) => (
+    var sharedPads = sharedPads.map((pad) => (
         <PadCard key={pad.static_id} data={pad} isShared={true} navigate={() => this._goToDetail(pad)} />
       ));
-
     const MyPads = () => (
       <View style={styles.container}>
         <Animated.View style={containerStyle}>
@@ -207,4 +207,4 @@ const mapStateToProps = state => ({
   fabFunction: state.nav.fabFunction
 });
 
-export default connect(mapStateToProps, { fetchLists, setNavigator })(HomeScreen);
+export default connect(mapStateToProps, { fetchLists })(HomeScreen);

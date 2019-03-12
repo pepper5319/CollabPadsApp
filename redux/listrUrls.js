@@ -8,6 +8,7 @@ export const SHARED_LINK_URL = 'https://www.collabpads.com/lists?l=';
 
 export const LISTS_URL = baseUrl + '/listr_api/lists/';
 export const SHARED_LISTS_URL = baseUrl + '/listr_api/shared_lists/';
+export const QUICK_URL = baseUrl + '/listr_api/get_one_off/';
 
 export const ITEMS_URL = baseUrl + '/listr_api/items/';
 

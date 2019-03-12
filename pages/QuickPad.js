@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ScrollView, Image, Animated, KeyboardAvoidingView, Keyboard, RefreshControl, Linking} from 'react-native';
+import {Platform, StyleSheet, Text, View, ScrollView, Image, Animated, KeyboardAvoidingView, Keyboard, RefreshControl, Linking, Share} from 'react-native';
 import { connect } from 'react-redux';
 import { ifIphoneX, isIphoneX } from 'react-native-iphone-x-helper'
 import FitImage from 'react-native-fit-image';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
-import { Card, Title, Paragraph, Button, TextInput } from 'react-native-paper'
+import { Card, Title, Paragraph, Button, TextInput, Appbar } from 'react-native-paper'
 
 import PadCard from '../components/PadCard.js';
-import BottomPadNav from '../components/BottomPadNav.js';
+// import BottomPadNav from '../components/BottomPadNav.js';
 import Item from '../components/Item.js';
 
-import { LISTS_URL, ITEMS_URL } from '../redux/listrUrls.js';
+import { LISTS_URL, ITEMS_URL, SHARED_LINK_URL } from '../redux/listrUrls.js';
 import { fetchSingleList } from '../redux/actions/listActions.js';
 import { fetchQuickPadItems, performQuickItemPost, deleteQuickItem, clearItems } from '../redux/actions/itemActions.js';
 import { changeFABFunction, changeFAB, noFAB } from '../redux/actions/navActions.js';
@@ -78,6 +78,22 @@ const styles = StyleSheet.create({
     height: HEADER_MAX_HEIGHT,
     resizeMode: 'cover',
   },
+  appbar: {
+    backgroundColor: 'white',
+    ...ifIphoneX({
+            paddingBottom: 50,
+            paddingTop: 30
+        })
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    ...ifIphoneX({
+        bottom: 35,
+      },
+        {bottom: 10,})
+  },
 });
 
 class NewItemCard extends Component {
@@ -127,6 +143,55 @@ class NewItemCard extends Component {
   }
 }
 
+class BottomPadNav extends Component {
+
+  constructor(){
+    super();
+  }
+
+  onBack = () => {
+    if(this.props.token !== undefined && this.props.token !== null && this.props.token !== ''){
+      this.props.navigator.navigate('App');
+    }else{
+      this.props.navigator.navigate('Auth');
+    }
+  }
+
+  onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          SHARED_LINK_URL + this.props.data,
+      },{
+        dialogTitle: "Share This Pad"
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  render() {
+    return (
+      <View>
+        <Appbar style={styles.appbar}>
+          <Appbar.Action icon="clear" onPress={() => this.onBack()} />
+          <Appbar.Action icon="share" onPress={() => this.onShare()} />
+        </Appbar>
+      </View>
+    );
+  }
+}
+
 class QuickPad extends Component {
 
   constructor(){
@@ -152,26 +217,28 @@ class QuickPad extends Component {
 
   }
   componentDidMount(){
-    this.setState({padID: 'PzNGem'});
+    console.log("MOUNTED")
     Linking.getInitialURL().then((url) => {
+      console.log(url);
       if (url) {
-        console.log('Initial url is: ' + url);
+        const route = url.replace(/.*?:\/\//g, '');
+        const id = route.match(/\/([^\/]+)\/?$/)[1];
+        const data = {pad_id: id};
+        this.setState({padID: id});
+        this.props.fetchSingleList(LISTS_URL, id, GUEST_KEY);
+        this.props.fetchQuickPadItems(ITEMS_URL, id, GUEST_KEY);
+      }else{
+        const { navigation } = this.props;
+        const pad_id = navigation.getParam('pad_id', '-1');
+        console.log(pad_id);
+        if(pad_id !== '-1'){
+          this.setState({padID: pad_id});
+          this.props.fetchSingleList(LISTS_URL, pad_id, GUEST_KEY);
+          this.props.fetchQuickPadItems(ITEMS_URL, pad_id, GUEST_KEY);
+        }else{
+        }
       }
     }).catch(err => console.error('An error occurred', err));
-    this.props.fetchSingleList(LISTS_URL, 'PzNGem', GUEST_KEY);
-    const { navigation } = this.props;
-
-    this.props.fetchQuickPadItems(ITEMS_URL, 'PzNGem', GUEST_KEY);
-    this.didBlur = navigation.addListener(
-      'didBlur',
-      payload => {
-        this.props.clearItems();
-        Animated.timing(this._visibility, {
-          toValue: 0,
-          duration: 300,
-        }).start();
-      }
-    );
   }
 
   componentDidUpdate(){
@@ -190,9 +257,20 @@ class QuickPad extends Component {
     }else if(!(this.props.items !== null && this.props.items !== undefined)){
       this.props.navigation.goBack();
     }
+    console.log("UPDATE");
+    if(this.state.padID === null || this.state.padID === undefined){
+      const { navigation } = this.props;
+      const pad_id = navigation.getParam('pad_id', '-1');
+      console.log(pad_id);
+      if(pad_id !== '-1'){
+        this.setState({padID: pad_id});
+        this.props.fetchSingleList(LISTS_URL, pad_id, GUEST_KEY);
+        this.props.fetchQuickPadItems(ITEMS_URL, pad_id, GUEST_KEY);
+      }else{
+      }
+    }
 
-    if(this.props.list !== null && this.props.list !== 'undefined'){
-      console.log(this.props.list);
+    if(this.props.list !== null && this.props.list !== undefined){
       if(this.state.padName === null){
         this.setState({padName: this.props.list.name});
       }
@@ -200,7 +278,6 @@ class QuickPad extends Component {
   }
 
   componentWillDismount(){
-    this.didBlur.remove();
   }
 
   makeid() {
@@ -322,7 +399,7 @@ class QuickPad extends Component {
               {items}
             </Animated.ScrollView>
           </Animated.View>
-          <BottomPadNav data={this.state.padID}/>
+          <BottomPadNav data={this.state.padID} navigator={this.props.navigation} token={this.props.token}/>
         </View>
     );
 
@@ -333,7 +410,8 @@ class QuickPad extends Component {
 const mapStateToProps = state => ({
   items: state.items.items,
   list: state.lists.list,
-  loading: state.items.loading
+  loading: state.items.loading,
+  token: state.users.token,
 });
 
 export default connect(mapStateToProps, { fetchSingleList, fetchQuickPadItems, performQuickItemPost, deleteQuickItem, clearItems, changeFABFunction, changeFAB, noFAB })(QuickPad);
