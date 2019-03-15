@@ -46,6 +46,7 @@ class BottomNav extends Component {
       toValue: 0,
       duration: 100,
     }).start(() => {
+      this.props.buttonFunction();
       Animated.timing(this._verticalPos, {
         toValue: 1,
         duration: 300,
@@ -87,11 +88,11 @@ class BottomNav extends Component {
 
   render() {
     var minHeight = isIphoneX() ? 50 : 0;
-    var maxHeight = isIphoneX() ? 50 : 25;
+    var maxHeight = isIphoneX() ? 50 : 32;
     const containerStyle = {
       paddingBottom: this._verticalPos.interpolate({
         inputRange: [0, 1],
-        outputRange: [minHeight, (Dimensions.get('window').height-(maxHeight+28))],
+        outputRange: [minHeight, (Dimensions.get('window').height-maxHeight)],
       }),
     };
     const iconStyle = {

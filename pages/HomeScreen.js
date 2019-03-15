@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl, Dimensions, Image} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl, Dimensions, Image, Easing} from 'react-native';
 import { FAB, Card, Appbar, Banner, Avatar } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   contentContainer: {
-    ...ifIphoneX({paddingTop: 48})
+    ...ifIphoneX({paddingTop: 48}, {paddingTop: Platform.OS === 'ios' ? 16 : 0,})
   }
 });
 
@@ -55,10 +55,16 @@ class HomeScreen extends Component {
       ],
     }
     this._visibility = new Animated.Value(0);
+    this._tabVisibility = new Animated.Value(0);
   }
 
   componentWillMount(){
     Animated.timing(this._visibility, {
+      toValue: 1,
+      duration: 300,
+    }).start();
+
+    Animated.timing(this._tabVisibility, {
       toValue: 1,
       duration: 300,
     }).start();
@@ -89,6 +95,18 @@ class HomeScreen extends Component {
     this.props.navigation.navigate('Details', pad);
   }
 
+  _goToNewPad = () => {
+    Animated.timing(this._tabVisibility, {
+      toValue: 0,
+      duration: 300,
+    }).start(() => {
+      Animated.timing(this._tabVisibility, {
+        toValue: 1,
+        duration: 300,
+      }).start();
+    });
+  }
+
   render() {
     // Remove the listener when you are done
     var pads = []
@@ -102,6 +120,13 @@ class HomeScreen extends Component {
         outputRange: [0, 1],
       })
     };
+
+    const tabVisibility = {
+      opacity: this._tabVisibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      })
+    };
       var pads = pads.map((pad) => (
         <PadCard key={pad.static_id} data={pad} navigate={() => this._goToDetail(pad)} />
       ));
@@ -111,7 +136,6 @@ class HomeScreen extends Component {
     const MyPads = () => (
       <View style={styles.container}>
         <Animated.View style={containerStyle}>
-
         <ScrollView style={styles.main} contentContainerStyle={{paddingTop: 16}}
             refreshControl={
             <RefreshControl
@@ -173,10 +197,7 @@ class HomeScreen extends Component {
       </View>
     );
 
-    const renderTabBar = (props) => <TabBar {...props}
-                                      indicatorStyle={{ backgroundColor: '#43a048' }}
-                                      labelStyle={{color: 'black'}}
-                                      style={[styles.contentContainer, { backgroundColor: 'white', textColor: 'black'}]}/>;
+    const renderTabBar = (props) => <TabBar{...props} indicatorStyle={{ backgroundColor: '#43a048' }} labelStyle={{color: 'black'}} style={[styles.contentContainer, tabVisibility, { backgroundColor: 'white', textColor: 'black'}]}/>;
 
     return (
         <View style={styles.container}>
@@ -191,7 +212,7 @@ class HomeScreen extends Component {
               initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
               renderTabBar={renderTabBar}
             />
-            <BottomNav navigator={this.props.navigation}/>
+          <BottomNav buttonFunction={this._goToNewPad} navigator={this.props.navigation}/>
           </Animated.View>
         </View>
     );

@@ -106,11 +106,12 @@ class Login extends Component {
             <View style={{flex: 1}}>
               <Image
                 style={[styles.backgroundImage,
-                   {flex: 1,
+                   { borderRadius: 16,
+                    flex: 1,
                     alignSelf: 'center',
-                    width: 250,
-                    height: 250}]}
-                source={require('../assets/ImageBG.png')}
+                    width: 150,
+                    height: 150}]}
+                source={require('../assets/logo.png')}
                 resizeMode="contain"
               />
             </View>

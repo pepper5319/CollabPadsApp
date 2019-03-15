@@ -40,35 +40,42 @@ class Loading extends Component {
   }
 
   checkIfLoggedIn = () => {
-    var cachedToken = AsyncStorage.getItem('userToken');
-    cachedToken.then(tok => {
-      console.log(tok);
-      if (tok !== null && tok !== undefined && tok !== '') {
-        this.props.setUserToken(tok);
-        Linking.getInitialURL().then((url) => {
-          if (url) {
-            const route = url.replace(/.*?:\/\//g, '');
-            const id = route.match(/\/([^\/]+)\/?$/)[1];
-            const data = {pad_id: id};
-            console.log(id);
-            this.props.navigation.navigate('QuickPad', data);
+    var firstTime = AsyncStorage.getItem('firstOpen');
+    firstTime.then(res => {
+      console.log(res);
+      if (res !== null && res !== undefined) {
+        var cachedToken = AsyncStorage.getItem('userToken');
+        cachedToken.then(tok => {
+          console.log(tok);
+          if (tok !== null && tok !== undefined && tok !== '') {
+            this.props.setUserToken(tok);
+            Linking.getInitialURL().then((url) => {
+              if (url) {
+                const route = url.replace(/.*?:\/\//g, '');
+                const id = route.match(/\/([^\/]+)\/?$/)[1];
+                const data = {pad_id: id};
+                console.log(id);
+                this.props.navigation.navigate('QuickPad', data);
+              }else{
+                this.props.navigation.navigate('App');
+              }
+            }).catch(err => console.error('An error occurred', err));
           }else{
-            this.props.navigation.navigate('App');
+            Linking.getInitialURL().then((url) => {
+              if (url) {
+                const route = url.replace(/.*?:\/\//g, '');
+                const id = route.match(/\/([^\/]+)\/?$/)[1];
+                const data = {pad_id: id};
+                console.log(id);
+                this.props.navigation.navigate('QuickPad', data);
+              }else{
+                this.props.navigation.navigate('Auth');
+              }
+            }).catch(err => console.error('An error occurred', err));
           }
-        }).catch(err => console.error('An error occurred', err));
+        });
       }else{
-        Linking.getInitialURL().then((url) => {
-          if (url) {
-            const route = url.replace(/.*?:\/\//g, '');
-            const id = route.match(/\/([^\/]+)\/?$/)[1];
-            const data = {pad_id: id};
-            console.log(id);
-            this.props.navigation.navigate('QuickPad', data);
-          }else{
-            this.props.navigation.navigate('Auth');
-          }
-        }).catch(err => console.error('An error occurred', err));
-        // this.props.navigation.navigate('QuickPad');
+        this.props.navigation.navigate('AppIntro');
       }
     });
   }

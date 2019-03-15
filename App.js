@@ -16,6 +16,7 @@ import NewPadScreen from './pages/NewPadScreen.js';
 import AccountScreen from './pages/AccountScreen.js';
 import RegisterScreen from './pages/RegisterScreen.js';
 import QuickPad from './pages/QuickPad.js';
+import AppIntro from './pages/AppIntro.js';
 
 const handleCustomTransition = ({ scenes }) => {
   const prevScene = scenes[scenes.length - 2];
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
   const AppNavigator = createSwitchNavigator(
     {
       Loading: Loading,
+      AppIntro: AppIntro,
       Auth: AuthStack,
       QuickPad:
       { screen: QuickPad,
@@ -125,6 +127,16 @@ class CustomFAB extends Component{
     }).start()
   }
 
+  handleFABClick = () => {
+    if(this.props.fabScreen === 'home'){
+      Animated.timing(this._iconOpacity, {
+        toValue: 0,
+        duration: 100,
+        easing: Easing.bezier(0.4, 0.0, 1, 1)
+      }).start();
+    }
+    this.props.handleFABClick();
+  }
 
   componentWillDismount(){
     Animated.timing(this._iconOpacity, {
@@ -152,7 +164,7 @@ class CustomFAB extends Component{
         style={[styles.fab, fabStyle]}
         color='white'
         icon={this.props.icon}
-        onPress={() => this.props.handleFABClick()}
+        onPress={() => this.handleFABClick()}
       />
     );
   }
@@ -248,7 +260,7 @@ class App extends Component {
             }
           }}/>
         {this.props.fabScreen !== null &&
-          <CustomFAB icon={icon} handleFABClick={this.handleFABClick}/>
+          <CustomFAB icon={icon} handleFABClick={this.handleFABClick} fabScreen={this.props.fabScreen}/>
         }
       </View>);
   }

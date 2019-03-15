@@ -86,14 +86,14 @@ class RegisterScreen extends Component {
     return (
         <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
           <Animated.View style={containerStyle}>
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, marginTop: 16}}>
               <Image
                 style={[styles.backgroundImage,
                    {flex: 1,
                     alignSelf: 'center',
                     width: 250,
                     height: 250}]}
-                source={require('../assets/ImageBG.png')}
+                source={require('../assets/logo.png')}
                 resizeMode="contain"
               />
             </View>
