@@ -205,7 +205,8 @@ class PadDialog extends Component {
                 }
               />
               <Subheading style={{fontWeight: '500'}}> Like Only</Subheading>
-              <Button style={{marginLeft: 16, flexGrow: 1}} mode="contained" onPress={() => this.updatePad(this.props.data.static_id)}>
+              <Button style={{marginLeft: 16, flexGrow: 1,
+                borderRadius: 32}} mode="contained" onPress={() => this.updatePad(this.props.data.static_id)}>
                 Save Pad
               </Button>
             </View>

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    padding: 16,
+    padding: 32,
     ...ifIphoneX({paddingTop: 40,
                   marginTop: 48
                 },{
@@ -175,7 +175,8 @@ class NewPadScreen extends Component {
             <Subheading style={{fontWeight: '500', marginTop: 10}}> Like Only</Subheading>
             </View>
             <View style={{flexGrow: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
-              <Button style={{marginBottom: 48}} mode="contained" onPress={() => this.createNewList()}>
+              <Button style={{marginBottom: 48,
+                borderRadius: 32}} mode="contained" onPress={() => this.createNewList()}>
                 Create Pad
               </Button>
             </View>

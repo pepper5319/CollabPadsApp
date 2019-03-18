@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#c8e6c9',
+    justifyContent: 'center',
   },
   header: {
     flex: 1,
@@ -24,13 +25,13 @@ const styles = StyleSheet.create({
     padding: 20
   },
   login__input: {
-    backgroundColor: '#c8e6c9',
+    backgroundColor: 'white',
     borderColor: 'red',
     marginBottom: 10
   },
   login__button: {
     marginTop: 5,
-    borderRadius: 5,
+    borderRadius: 32,
   }
 });
 
@@ -103,53 +104,57 @@ class Login extends Component {
     return (
         <KeyboardAvoidingView style={styles.container} behavior={padding} enabled>
           <Animated.View style={containerStyle}>
-            <View style={{flex: 2}}>
+            <View style={{flex: 1.5, justifyContent: 'center'}}>
               <Image
                 style={[styles.backgroundImage,
                    {borderRadius: 16,
-                    flex: 1,
                     alignSelf: 'center',
                     width: 150,
-                    height: 150}]}
+                    height: 150,
+                  }]}
                 source={require('../assets/logo.png')}
                 resizeMode="contain"
               />
+              <Button style={[styles.login__button, {alignSelf: 'center'}]} mode='contained' onPress={() => this.createQuickPad()}>
+                Create QuickPad
+              </Button>
             </View>
           <View style={styles.form}>
-            <Button style={[styles.login__button, {alignSelf: 'center'}]} mode='contained' onPress={() => this.createQuickPad()}>
-              Create QuickPad
-            </Button>
-            <Headline style={{alignSelf: 'center', marginTop: 16, marginBottom: 16}}>or</Headline>
-            <View>
-              <TextInput
-                style={styles.login__input}
-                label='Username'
-                mode="outlined"
-                autoCapitalize='none'
-                value={this.state.username}
-                onChangeText={text => this.setState({username: text})}
-                onSubmitEditing={() => { this.secondTextInput.focus(); }}
-              />
-            </View>
-            <View>
-              <TextInput
-                style={styles.login__input}
-                label='Password'
-                mode="outlined"
-                value={this.state.password}
-                secureTextEntry
-                autoCapitalize='none'
-                returnKeyType='done'
-                onChangeText={text => this.setState({password: text })}
-                ref={(input) => { this.secondTextInput = input; }}
-              />
-            </View>
-          <Button style={styles.login__button} mode="contained" onPress={() => this.userLogin()}>
-              Login
-            </Button>
-            <Button style={styles.login__button} onPress={() => this.props.navigation.navigate('Register')}>
-              Create Account
-            </Button>
+            <Card style={{borderRadius: 16, padding: 8}} elevation={10}>
+              <Card.Title title="Login to CollabPads"/>
+              <Card.Content>
+                <View>
+                  <TextInput
+                    style={styles.login__input}
+                    label='Username'
+                    mode="outlined"
+                    autoCapitalize='none'
+                    value={this.state.username}
+                    onChangeText={text => this.setState({username: text})}
+                    onSubmitEditing={() => { this.secondTextInput.focus(); }}
+                  />
+                </View>
+                <View>
+                  <TextInput
+                    style={styles.login__input}
+                    label='Password'
+                    mode="outlined"
+                    value={this.state.password}
+                    secureTextEntry
+                    autoCapitalize='none'
+                    returnKeyType='done'
+                    onChangeText={text => this.setState({password: text })}
+                    ref={(input) => { this.secondTextInput = input; }}
+                  />
+                </View>
+                <Button style={styles.login__button} mode="contained" onPress={() => this.userLogin()}>
+                  Login
+                </Button>
+                <Button style={styles.login__button} onPress={() => this.props.navigation.navigate('Register')}>
+                  Create Account
+                </Button>
+              </Card.Content>
+            </Card>
           </View>
           <Portal>
             <Dialog
