@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ScrollView, Animated, Image, KeyboardAvoidingView} from 'react-native';
+import {Platform, StyleSheet, Text, View, ScrollView, Animated, Image, KeyboardAvoidingView, Linking} from 'react-native';
 import { USER_URL, USER_AUTH_URL, USER_PASS_CHANGE_URL } from '../redux/listrUrls.js';
 import { connect } from 'react-redux';
-import { FAB, Card, Appbar, TextInput, Button, Surface, Title, Headline} from 'react-native-paper';
-import {performLogin} from '../redux/actions/userActions.js';
+import { FAB, Card, Appbar, TextInput, Button, Surface, Title, Headline, Portal, Dialog, Paragraph} from 'react-native-paper';
+import {performLogin, performLogout} from '../redux/actions/userActions.js';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
 import { noFAB } from '../redux/actions/navActions.js';
@@ -24,6 +24,9 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     resizeMode: 'cover'
+  },
+  header: {
+    ...ifIphoneX({marginTop: 48, marginBottom: 32}, {marginTop: 16, marginBottom: 16})
   }
 });
 
@@ -34,7 +37,10 @@ class AccountScreen extends Component {
       newUsername: '',
       confirmUsername: '',
       newPassword: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      requestDelete: false,
+      delUsername: '',
+      canDelete: false
     }
     this._visibility = new Animated.Value(0);
   }
@@ -81,13 +87,46 @@ class AccountScreen extends Component {
     }
   }
 
+  requestDelete = () => {
+    this.setState({requestDelete: true});
+  }
+
+  confirmUsername = (name) => {
+    this.setState({delUsername: name});
+    if(name === this.props.data.owner){
+      this.setState({canDelete: true});
+    }else{
+      if(this.state.canDelete === true){
+        this.setState({canDelete: false});
+      }
+    }
+  }
+
+  deleteUser = () => {
+    fetch(USER_URL, {
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': 'Token ' + this.props.token,
+      }
+    })
+    .then( () => {
+      this.props.performLogout(USER_URL);
+    });
+  }
+
+  privacy = () => {
+
+  }
+
   render() {
     return (
-        <View behavior="padding" style={styles.container} enabled>
+        <ScrollView style={styles.container} enabled>
           <View style={{flex: 2, justifyContent: 'flex-end', alignItems: 'center'}}>
-            <Headline style={{marginBottom: 10}}>My Account: {this.props.username}</Headline>
+            <Headline style={styles.header}>My Account: {this.props.username}</Headline>
           </View>
           <View style={{flexGrow: 1, justifyContent: 'flex-end'}}>
+            <KeyboardAvoidingView behavior="position">
             <Surface style={styles.surface}>
               <Title>Change Username</Title>
               <TextInput
@@ -111,8 +150,6 @@ class AccountScreen extends Component {
               />
               <Button onPress={() => this.handleNameChange()}>Change</Button>
             </Surface>
-
-              <KeyboardAvoidingView behavior="padding">
             <Surface style={styles.surface}>
               <Title>Change Password</Title>
               <TextInput
@@ -138,10 +175,38 @@ class AccountScreen extends Component {
               />
             <Button onPress={() => this.handlePassChange()}>Change</Button>
             </Surface>
-
             </KeyboardAvoidingView>
+            <Button style={{marginTop: 10, marginBottom: 16}} color='red' mode="outlined" onPress={() => this.requestDelete()}>Delete Account</Button>
+            <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 16}}>
+              <Button compact color='grey' onPress={() => Linking.openURL('https://app.termly.io/document/privacy-policy/43ccc625-28e6-4910-ae48-c0071babafa9').catch((err) => console.error('An error occurred', err))}>Privacy Policy</Button>
+              <Button compact color='grey' onPress={() => Linking.openURL('https://www.collabpads.com/').catch((err) => console.error('An error occurred', err))}>Website</Button>
+            </View>
           </View>
-        </View>
+          {this.state.requestDelete === true &&
+            <Portal>
+            <Dialog
+              visible={this.state.requestDelete}
+              onDismiss={this._hideDialog}>
+              <KeyboardAvoidingView>
+              <Dialog.Content>
+                <Dialog.Title>Are You Sure You Want to Delete Your Account?</Dialog.Title>
+                <Paragraph style={{fontWeight: '500'}}>Type in your username to confirm</Paragraph>
+                  <TextInput
+                    value={this.state.delUsername}
+                    mode='outlined'
+                    error={!this.state.canDelete}
+                    onChangeText={delUsername => this.confirmUsername(delUsername)}
+                    autoCapitalize='none'
+                    onSubmitEditing={() => this.deletePad(this.props.data.static_id)}
+                    returnKeyType='done'
+                    style={{marginBottom: 10}}
+                  />
+              </Dialog.Content>
+              </KeyboardAvoidingView>
+            </Dialog>
+          </Portal>
+          }
+        </ScrollView>
     );
   }
 }
@@ -150,4 +215,4 @@ const mapStateToProps = state => ({
   username: state.users.username
 });
 
-export default connect(mapStateToProps, { noFAB, getUserData, performNameChange, performPassChange })(AccountScreen);
+export default connect(mapStateToProps, { noFAB, getUserData, performNameChange, performPassChange, performLogout })(AccountScreen);

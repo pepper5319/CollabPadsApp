@@ -10,9 +10,7 @@ _removeData = async (key) => {
 };
 
 export const beginUserLogin = () => dispatch =>{
-  return{
-    type: USER_LOGIN
-  }
+    dispatch({type: USER_LOGIN});
 }
 
 export const resetErrors = () => dispatch =>{
@@ -31,6 +29,7 @@ export const setUserToken = (token) => dispatch => {
 }
 
 export const performRegister = (url, userData) => dispatch => {
+  dispatch(beginUserLogin());
   fetch(url, {
     method: 'POST',
     headers: {

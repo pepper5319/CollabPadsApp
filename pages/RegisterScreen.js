@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, ScrollView, Animated, Image, KeyboardAvoidingView} from 'react-native';
 import { REGISTER_URL } from '../redux/listrUrls.js';
 import { connect } from 'react-redux';
-import { FAB, Card, Appbar, TextInput, Button, } from 'react-native-paper';
+import { FAB, Card, Appbar, TextInput, Button, Headline, Portal, Dialog, ActivityIndicator, Colors} from 'react-native-paper';
 import { performRegister } from '../redux/actions/userActions.js';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -91,11 +91,12 @@ class RegisterScreen extends Component {
                 style={[styles.backgroundImage,
                    {flex: 1,
                     alignSelf: 'center',
-                    width: 250,
-                    height: 250}]}
+                    width: 150,
+                    height: 150}]}
                 source={require('../assets/logo.png')}
                 resizeMode="contain"
               />
+            <Headline style={{alignSelf: 'center', marginTop: 16, marginBottom: 16}}>Sign Up for CollabPads</Headline>
             </View>
           <View style={styles.form}>
             <TextInput
@@ -125,6 +126,7 @@ class RegisterScreen extends Component {
               value={this.state.password2}
               secureTextEntry
               autoCapitalize='none'
+              returnKeyType='done'
               onChangeText={text => this.setState({password2: text })}
               ref={(input) => { this.thirdTextInput = input; }}
             />
@@ -135,6 +137,15 @@ class RegisterScreen extends Component {
               Login
             </Button>
           </View>
+          <Portal>
+            <Dialog
+               visible={this.props.loading === true}>
+              <Dialog.Title>Setting Up Your Account</Dialog.Title>
+              <Dialog.Content>
+                <ActivityIndicator animating={true} color={Colors.red800} />
+              </Dialog.Content>
+            </Dialog>
+          </Portal>
         </Animated.View>
         </KeyboardAvoidingView>
     );

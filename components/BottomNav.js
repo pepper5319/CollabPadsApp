@@ -28,6 +28,12 @@ const styles = StyleSheet.create({
       },
         {bottom: 10,})
   },
+  card:{
+    marginBottom: 16,
+    marginLeft: 16,
+    marginRight: 16,
+    borderRadius: 16
+  },
 });
 
 class BottomNav extends Component {
@@ -120,7 +126,7 @@ class BottomNav extends Component {
       <View>
         <Appbar style={[styles.appbar,  containerStyle]}>
           <Animated.View style={iconStyle}>
-            <Appbar.Action color="black" icon="clear" onPress={() => this.onLogout()} />
+            <Appbar.Action color="black" icon="power-settings-new" onPress={() => this.onLogout()} />
             <Appbar.Action color="black" icon="face" onPress={() => this.props.navigator.navigate('Account')} />
           </Animated.View>
         </Appbar>

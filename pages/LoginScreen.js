@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, ScrollView, Animated, Image, KeyboardAvoidingView} from 'react-native';
 import { LOGIN_URL, QUICK_URL} from '../redux/listrUrls.js';
 import { connect } from 'react-redux';
-import { FAB, Card, Appbar, TextInput, Button, Headline} from 'react-native-paper';
+import { FAB, Card, Appbar, TextInput, Button, Headline, ActivityIndicator, Portal, Dialog, Colors} from 'react-native-paper';
 import {performLogin} from '../redux/actions/userActions.js';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -103,10 +103,10 @@ class Login extends Component {
     return (
         <KeyboardAvoidingView style={styles.container} behavior={padding} enabled>
           <Animated.View style={containerStyle}>
-            <View style={{flex: 1}}>
+            <View style={{flex: 2}}>
               <Image
                 style={[styles.backgroundImage,
-                   { borderRadius: 16,
+                   {borderRadius: 16,
                     flex: 1,
                     alignSelf: 'center',
                     width: 150,
@@ -139,6 +139,7 @@ class Login extends Component {
                 value={this.state.password}
                 secureTextEntry
                 autoCapitalize='none'
+                returnKeyType='done'
                 onChangeText={text => this.setState({password: text })}
                 ref={(input) => { this.secondTextInput = input; }}
               />
@@ -150,13 +151,23 @@ class Login extends Component {
               Create Account
             </Button>
           </View>
+          <Portal>
+            <Dialog
+               visible={this.props.loading === true}>
+              <Dialog.Title>Logging In</Dialog.Title>
+              <Dialog.Content>
+                <ActivityIndicator animating={true} color={Colors.red800} />
+              </Dialog.Content>
+            </Dialog>
+          </Portal>
         </Animated.View>
         </KeyboardAvoidingView>
     );
   }
 }
 const mapStateToProps = state => ({
-  token: state.users.token
+  token: state.users.token,
+  loading: state.users.loading
 });
 
 export default connect(mapStateToProps, { performLogin, noFAB })(Login);

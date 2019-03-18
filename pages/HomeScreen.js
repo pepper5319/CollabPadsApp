@@ -39,8 +39,43 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     ...ifIphoneX({paddingTop: 48}, {paddingTop: Platform.OS === 'ios' ? 16 : 0,})
-  }
+  },
+  card:{
+    marginBottom: 16,
+    marginLeft: 16,
+    marginRight: 16,
+    borderRadius: 16,
+    backgroundColor: '#e9e9e9'
+  },
 });
+
+class LoadingCard extends Component {
+  constructor(){
+    super();
+    this._loadingVisibility = new Animated.Value(0);
+  }
+
+  componentWillMount(){
+    
+  }
+
+  render(){
+    const cardStyle = {
+      opacity: this._loadingVisibility.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 0.75],
+      })
+    };
+
+    return(
+      <Card style={[styles.card, cardStyle]}>
+          <Card.Cover style={{borderTopLeftRadius: 16, borderTopRightRadius: 16, opacity: 0}} source={{ uri: 'https://images.unsplash.com/3/doctype-hi-res.jpg?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjUyNDU1fQ' }} />
+          <Card.Title
+            title=""/>
+      </Card>
+    );
+  }
+}
 
 class HomeScreen extends Component {
 
@@ -109,8 +144,8 @@ class HomeScreen extends Component {
 
   render() {
     // Remove the listener when you are done
-    var pads = []
-    var sharedPads = []
+    var pads = null
+    var sharedPads = null
     if(this.props.data !== undefined){ pads = this.props.data; }
     if(this.props.sharedData !== undefined){ sharedPads = this.props.sharedData; }
     const containerStyle = {
@@ -127,12 +162,16 @@ class HomeScreen extends Component {
         outputRange: [0, 1],
       })
     };
+    if(pads !== null){
       var pads = pads.map((pad) => (
         <PadCard key={pad.static_id} data={pad} navigate={() => this._goToDetail(pad)} />
       ));
+    }
+    if(sharedPads !== null){
     var sharedPads = sharedPads.map((pad) => (
         <PadCard key={pad.static_id} data={pad} isShared={true} navigate={() => this._goToDetail(pad)} />
       ));
+    }
     const MyPads = () => (
       <View style={styles.container}>
         <Animated.View style={containerStyle}>
@@ -144,7 +183,8 @@ class HomeScreen extends Component {
             />
           }>
           <View>
-            {pads.length <= 0 &&
+
+            {pads !== null && pads.length <= 0 &&
               <Banner
                 visible={pads.length <= 0}
                 actions={[
@@ -177,7 +217,8 @@ class HomeScreen extends Component {
             />
           }>
           <View>
-            {sharedPads.length <= 0 &&
+
+            {sharedPads !== null && sharedPads.length <= 0 &&
               <Banner
                 visible={sharedPads.length <= 0}
                 actions={[

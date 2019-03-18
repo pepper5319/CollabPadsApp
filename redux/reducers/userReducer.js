@@ -1,5 +1,5 @@
 import { USER_LOGIN, USER_LOGIN_SUCCESS, USER_HAS_LOGIN, USER_LOGOUT_SUCCESS, USER_DATA_SUCCESS, USER_RESET_ERRORS } from "../actions/types";
-import {AsyncStorage} from 'react-native';
+import {AsyncStorage, Alert} from 'react-native';
 
 _storeData = async (key, value) => {
   try {
@@ -44,8 +44,8 @@ export default function userReducer(state = {token: null, loading: false, userna
             token: action.payload.key
           }
         }else{
-          console.log(action.payload);
           if(action.payload.username){
+            Alert.alert("Invalid Username", action.payload.username[0]);
             return {
               token: null,
               loading: false,
@@ -53,6 +53,7 @@ export default function userReducer(state = {token: null, loading: false, userna
             }
           }
           else if(action.payload.non_field_errors){
+            Alert.alert("Invalid Login", "Could not login with username and/or password. Please try again.");
             return {
               token: null,
               loading: false,
@@ -60,6 +61,7 @@ export default function userReducer(state = {token: null, loading: false, userna
             }
           }
           else if(action.payload.password1){
+            Alert.alert("Invalid Password", "Your must be at least 8 characters long\nYour password shouldn't be too common (ex: 'password')\nYour password shouldn't be completely numeric");
             return {
               token: null,
               loading: false,
