@@ -73,7 +73,7 @@ class RegisterScreen extends Component {
   }
 
   userRegister = () => {
-    if(checked !== true){
+    if(this.state.checked === true){
       if (this.state.username !== '' && this.state.password !== '' && this.state.password2 !== '') {
         const userData = {
           username: this.state.username,
@@ -86,7 +86,6 @@ class RegisterScreen extends Component {
         alert('You must fill out all fields');
       }
     }
-
   }
 
   componentWillMount() {
@@ -173,6 +172,6 @@ class RegisterScreen extends Component {
     </KeyboardAvoidingView>);
   }
 }
-const mapStateToProps = state => ({token: state.users.token});
+const mapStateToProps = state => ({token: state.users.token, loading: state.users.loading});
 
 export default connect(mapStateToProps, {performRegister, noFAB})(RegisterScreen);

@@ -91,17 +91,6 @@ class AccountScreen extends Component {
     this.setState({requestDelete: true});
   }
 
-  confirmUsername = (name) => {
-    this.setState({delUsername: name});
-    if(name === this.props.data.owner){
-      this.setState({canDelete: true});
-    }else{
-      if(this.state.canDelete === true){
-        this.setState({canDelete: false});
-      }
-    }
-  }
-
   deleteUser = () => {
     fetch(USER_URL, {
       method: 'DELETE',
@@ -115,8 +104,15 @@ class AccountScreen extends Component {
     });
   }
 
-  privacy = () => {
-
+  checkUsername = (name) => {
+    this.setState({delUsername: name});
+    if(name === this.props.username){
+      this.setState({canDelete: true});
+    }else{
+      if(this.state.canDelete === true){
+        this.setState({canDelete: false});
+      }
+    }
   }
 
   render() {
@@ -195,9 +191,9 @@ class AccountScreen extends Component {
                     value={this.state.delUsername}
                     mode='outlined'
                     error={!this.state.canDelete}
-                    onChangeText={delUsername => this.confirmUsername(delUsername)}
+                    onChangeText={(delUsername) => this.checkUsername(delUsername)}
                     autoCapitalize='none'
-                    onSubmitEditing={() => this.deletePad(this.props.data.static_id)}
+                    onSubmitEditing={() => this.deleteUser()}
                     returnKeyType='done'
                     style={{marginBottom: 10}}
                   />
