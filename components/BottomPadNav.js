@@ -59,6 +59,7 @@ class BottomNav extends Component {
     return (
       <View>
         <Appbar style={styles.appbar}>
+          <Appbar.BackAction onPress={() => this.props.navigator.goBack()} />
           <Appbar.Action icon="share" onPress={() => this.onShare()} />
         </Appbar>
       </View>

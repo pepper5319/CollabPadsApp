@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl, Dimensions, Image, Easing} from 'react-native';
-import { FAB, Card, Appbar, Banner, Avatar } from 'react-native-paper';
+import { FAB, Card, Appbar, Banner, Avatar, ActivityIndicator } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -56,7 +56,7 @@ class LoadingCard extends Component {
   }
 
   componentWillMount(){
-    
+
   }
 
   render(){
@@ -184,6 +184,8 @@ class HomeScreen extends Component {
           }>
           <View>
 
+            {pads === null && <ActivityIndicator size='large' animating={true} /> }
+
             {pads !== null && pads.length <= 0 &&
               <Banner
                 visible={pads.length <= 0}
@@ -217,6 +219,7 @@ class HomeScreen extends Component {
             />
           }>
           <View>
+            {sharedPads === null && <ActivityIndicator size='large' animating={true} /> }
 
             {sharedPads !== null && sharedPads.length <= 0 &&
               <Banner

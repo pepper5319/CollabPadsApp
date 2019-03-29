@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { ifIphoneX, isIphoneX } from 'react-native-iphone-x-helper'
 import FitImage from 'react-native-fit-image';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
-import { Card, Title, Paragraph, Button, TextInput } from 'react-native-paper'
+import { Card, Title, Paragraph, Button, TextInput, Appbar } from 'react-native-paper'
 
 import PadCard from '../components/PadCard.js';
 import BottomPadNav from '../components/BottomPadNav.js';
@@ -60,23 +60,27 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: 0,
+    top:0,
     left: 0,
     right: 0,
     backgroundColor: 'transparent',
     overflow: 'hidden',
     height: HEADER_MAX_HEIGHT,
-
   },
   backgroundImage: {
     position: 'absolute',
-    top: 0,
+    top:0,
     left: 0,
     right: 0,
     width: null,
     height: HEADER_MAX_HEIGHT,
     resizeMode: 'cover',
   },
+  backButton: {
+    position: 'absolute',
+    left: 0,
+    ...ifIphoneX({top: 32}, {top: 0})
+  }
 });
 
 class NewItemCard extends Component {
@@ -298,6 +302,7 @@ class HomeScreen extends Component {
               source={{uri: this.state.padBgUrl}}
               />
             <Animated.Text style={[styles.bg__title, {opacity: titleOpacity}]}>{this.state.padName}</Animated.Text>
+
           </Animated.View>
           <Animated.View style={[styles.main, containerStyle]}>
             <Animated.ScrollView
@@ -318,7 +323,7 @@ class HomeScreen extends Component {
               {items}
             </Animated.ScrollView>
           </Animated.View>
-          <BottomPadNav data={this.state.padID}/>
+          <BottomPadNav data={this.state.padID} navigator={this.props.navigation}/>
         </View>
     );
 

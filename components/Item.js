@@ -84,7 +84,7 @@ class Item extends Component {
   render(){
     var chipColor = (this.state.isLiked) ? {backgroundColor: '#43a048', textColor: 'white'} : {};
     return(
-        <Card style={styles.card} elevation={1}>
+        <Card style={styles.card} elevation={4}>
           <Card.Content>
             <Title style={{paddingTop: 16}}>{this.props.data.name}</Title>
             {this.props.data.description.length > 0 && <Paragraph>{this.props.data.description}</Paragraph> }
