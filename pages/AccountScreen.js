@@ -115,6 +115,10 @@ class AccountScreen extends Component {
     }
   }
 
+  _hideDialog = () => {
+    this.setState({requestDelete: false});
+  }
+
   render() {
     return (
         <ScrollView style={styles.container} enabled>
@@ -182,7 +186,7 @@ class AccountScreen extends Component {
             <Portal>
             <Dialog
               visible={this.state.requestDelete}
-              onDismiss={this._hideDialog}>
+              onDismiss={() => this._hideDialog()}>
               <KeyboardAvoidingView>
               <Dialog.Content>
                 <Dialog.Title>Are You Sure You Want to Delete Your Account?</Dialog.Title>
