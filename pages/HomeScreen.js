@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, ScrollView, Animated, RefreshControl, Dimensions, Image, Easing} from 'react-native';
-import { FAB, Card, Appbar, Banner, Avatar, ActivityIndicator } from 'react-native-paper';
+import {Platform, StyleSheet, Text, View, ScrollView, Animated, RefreshControl, Dimensions, Image, Easing} from 'react-native';
+import { FAB, Card, Appbar, Banner, Avatar, ActivityIndicator, Portal, Dialog, Button } from 'react-native-paper';
 import { ifIphoneX } from 'react-native-iphone-x-helper'
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -10,9 +10,9 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import PadCard from '../components/PadCard.js';
 import BottomNav from '../components/BottomNav.js';
 
-import { LISTS_URL, USER_URL } from '../redux/listrUrls.js';
+import { LISTS_URL, USER_URL, LOGOUT_URL } from '../redux/listrUrls.js';
 import { fetchLists } from '../redux/actions/listActions.js';
-import { getUserData } from '../redux/actions/userActions.js';
+import { getUserData, performLogout } from '../redux/actions/userActions.js';
 
 
 const styles = StyleSheet.create({
@@ -88,6 +88,7 @@ class HomeScreen extends Component {
         { key: 'first', title: 'My Pads' },
         { key: 'second', title: 'Collab Pads' },
       ],
+      confirmLogout: false
     }
     this._visibility = new Animated.Value(0);
     this._tabVisibility = new Animated.Value(0);
@@ -140,6 +141,16 @@ class HomeScreen extends Component {
         duration: 300,
       }).start();
     });
+  }
+
+  _showDialog = () => this.setState({ confirmLogout: true });
+
+  _hideDialog = () => this.setState({ confirmLogout: false });
+
+
+  onLogout = () => {
+    this.props.performLogout(LOGOUT_URL);
+    this.props.navigation.navigate('Auth');
   }
 
   render() {
@@ -238,6 +249,7 @@ class HomeScreen extends Component {
           </View>
         </ScrollView>
         </Animated.View>
+
       </View>
     );
 
@@ -256,8 +268,19 @@ class HomeScreen extends Component {
               initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
               renderTabBar={renderTabBar}
             />
-          <BottomNav buttonFunction={this._goToNewPad} navigator={this.props.navigation}/>
+          <BottomNav onLogout={this._showDialog} buttonFunction={this._goToNewPad} navigator={this.props.navigation}/>
           </Animated.View>
+          <Portal>
+            <Dialog
+               visible={this.state.confirmLogout}
+               onDismiss={this._hideDialog}>
+              <Dialog.Title>Sign Out of Your Account?</Dialog.Title>
+              <Dialog.Actions>
+                <Button onPress={this.onLogout}>Yes</Button>
+                <Button onPress={this._hideDialog}>No</Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
         </View>
     );
   }
@@ -272,4 +295,4 @@ const mapStateToProps = state => ({
   fabFunction: state.nav.fabFunction
 });
 
-export default connect(mapStateToProps, { fetchLists })(HomeScreen);
+export default connect(mapStateToProps, { fetchLists, performLogout })(HomeScreen);

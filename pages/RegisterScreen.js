@@ -156,7 +156,7 @@ class RegisterScreen extends Component {
             Create Account
           </Button>
           <Button style={styles.login__button} onPress={() => this.props.navigation.goBack()}>
-            Login
+            Sign In
           </Button>
           </Card.Content>
         </Card>

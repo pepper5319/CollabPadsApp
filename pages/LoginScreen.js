@@ -121,7 +121,7 @@ class Login extends Component {
             </View>
           <View style={styles.form}>
             <Card style={{borderRadius: 16, padding: 8}} elevation={10}>
-              <Card.Title title="Login to CollabPads"/>
+              <Card.Title title="Sign In to CollabPads"/>
               <Card.Content>
                 <View>
                   <TextInput
@@ -148,7 +148,7 @@ class Login extends Component {
                   />
                 </View>
                 <Button style={styles.login__button} mode="contained" onPress={() => this.userLogin()}>
-                  Login
+                  Sign In
                 </Button>
                 <Button style={styles.login__button} onPress={() => this.props.navigation.navigate('Register')}>
                   Create Account

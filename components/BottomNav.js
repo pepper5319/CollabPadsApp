@@ -87,10 +87,6 @@ class BottomNav extends Component {
     );
   }
 
-  onLogout = () => {
-    this.props.performLogout(LOGOUT_URL);
-    this.props.navigator.navigate('Auth');
-  }
 
   render() {
     var minHeight = isIphoneX() ? 50 : 0;
@@ -126,7 +122,7 @@ class BottomNav extends Component {
       <View>
         <Appbar style={[styles.appbar,  containerStyle]}>
           <Animated.View style={iconStyle}>
-            <Appbar.Action color="black" icon="power-settings-new" onPress={() => this.onLogout()} />
+            <Appbar.Action color="black" icon="power-settings-new" onPress={() => this.props.onLogout()} />
             <Appbar.Action color="black" icon="face" onPress={() => this.props.navigator.navigate('Account')} />
           </Animated.View>
         </Appbar>
@@ -140,4 +136,4 @@ const mapStateToProps = state => ({
   token: state.users.token
 });
 
-export default connect(mapStateToProps, { performLogout, changeFABFunction })(BottomNav);
+export default connect(mapStateToProps, { changeFABFunction })(BottomNav);
