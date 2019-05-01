@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Animated} from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, IconButton, Chip } from 'react-native-paper';
+import {Platform, StyleSheet, Text, View, Animated, NetInfo} from 'react-native';
+import { Avatar, Button, Card, Title, Paragraph, IconButton, Chip, Subheading } from 'react-native-paper';
 import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 import { USER_URL, ITEMS_URL } from '../redux/listrUrls.js';
 import {connect} from 'react-redux';
@@ -83,10 +83,12 @@ class Item extends Component {
 
   render(){
     var chipColor = (this.state.isLiked) ? {backgroundColor: '#43a048', textColor: 'white'} : {};
+    var bgColor = this.props.isOffline ? {backgroundColor: '#f2f2f2'} : {}
     return(
-        <Card style={styles.card} elevation={4}>
+        <Card style={[styles.card, bgColor]} elevation={4}>
           <Card.Content>
             <Title style={{paddingTop: 16}}>{this.props.data.name}</Title>
+            {this.props.isOffline && <Subheading style={{fontWeight: '200'}}>Created Offline</Subheading>}
             {this.props.data.description.length > 0 && <Paragraph>{this.props.data.description}</Paragraph> }
           </Card.Content>
           <Card.Actions>

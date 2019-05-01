@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ScrollView, Image, Animated, KeyboardAvoidingView, Keyboard, RefreshControl} from 'react-native';
+import {Platform, StyleSheet, Text, View, ScrollView, Image,
+        Animated, KeyboardAvoidingView, Keyboard, RefreshControl, NetInfo} from 'react-native';
 import { connect } from 'react-redux';
 import { ifIphoneX, isIphoneX } from 'react-native-iphone-x-helper'
 import FitImage from 'react-native-fit-image';
@@ -145,12 +146,13 @@ class HomeScreen extends Component {
       itemDesc: '',
       refreshing: false,
       readOnly: false,
-      scrollY: new Animated.Value(0)
+      scrollY: new Animated.Value(0),
+      changesToMake: [],
+      offlineItems: [{name: 'Test', description: '', static_id: '12345', liked_users: []}],
     }
     this._visibility = new Animated.Value(0);
     this.didBlur = null;
-  }
-
+}
   componentWillReceiveProps(props){
 
   }
@@ -211,13 +213,26 @@ class HomeScreen extends Component {
   }
 
   _performItemPost = (itemName, itemDesc) => {
+
     if(itemName !== ''){
       const data = {
         "name": itemName, "static_id": this.makeid()}
       if(itemDesc !== '') {
         data.description = itemDesc
       }
-      this.props.performItemPost(ITEMS_URL, data, this.state.padID, this.props.token);
+      NetInfo.isConnected.fetch().then(isConnected => {
+        if(isConnected){
+          this.props.performItemPost(ITEMS_URL, data, this.state.padID, this.props.token);
+        }else{
+          console.log("OFFLINE")
+          data.liked_users = []
+          data.liked_guests = 0
+          if(itemDesc === ''){
+            data.description = ''
+          }
+          this.setState({offlineItems: [data].concat(this.state.offlineItems)});
+        }
+      });
       Keyboard.dismiss();
       this.setState({ newItemCardVisible: !this.state.newItemCardVisible,
                       itemName: '',
@@ -229,7 +244,16 @@ class HomeScreen extends Component {
 
   _deleteItem = (e, itemID, listID) => {
     e.preventDefault();
-    this.props.deleteItem(ITEMS_URL, itemID, listID, this.props.token);
+    var offItem = this.state.offlineItems.find(item => item.static_id === itemID);
+    if (offItem !== undefined) {
+      var index = this.state.offlineItems.indexOf(offItem)
+      if (index !== -1) {
+        this.setState({offlineItems: this.state.offlineItems.filter((_, i) => i !== index)});
+      }
+    }else{
+      this.props.deleteItem(ITEMS_URL, itemID, listID, this.props.token);
+    }
+
   }
 
   _toggleNewItemCard = () => {
@@ -248,10 +272,29 @@ class HomeScreen extends Component {
     this.setState({refreshing: this.props.loading});
   }
 
+  handleItemChange = (type, data) => {
+    this.setState({changesToMake: this.state.changesToMake.concat({type, data})});
+    switch (type) {
+      case 'add':
+        this._toggleNewItemCard();
+        console.log("ADDED ITEM");
+        break;
+      case 'like':
+        console.log("LIKED ITEM");
+        break;
+      case 'remove':
+        console.log("REMOVED ITEM");
+        break;
+    }
+  }
+
   render() {
     try {
+    var offlineItems = this.state.offlineItems.map((item) => (
+      <Item isOffline={true} key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem} readOnly={this.state.readOnly}/>
+    ))
     var items = this.props.items.map((item) => (
-      <Item key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem} readOnly={this.state.readOnly}/>
+      <Item isOffline={false} key={item.static_id} data={item} listID={this.state.padID} onRemove={this._deleteItem} readOnly={this.state.readOnly}/>
     ));
     }catch(error){
       console.log(error);
@@ -290,7 +333,11 @@ class HomeScreen extends Component {
       extrapolate: 'clamp',
     });
 
-    var newCard = ((this.state.newItemCardVisible) ? <NewItemCard performItemPost={this._performItemPost} toggleNewItemCard={this._toggleNewItemCard}/> : null)
+    var newCard = ((this.state.newItemCardVisible) ?
+                    <NewItemCard
+                      performItemPost={this._performItemPost}
+                      toggleNewItemCard={this._toggleNewItemCard}/>
+                    : null)
     return (
         <View style={styles.container}>
           <Animated.View style={[styles.header, {transform: [{ translateY: headerTranslate }], justifyContent: 'center', alignItems: 'center'}]}>
@@ -320,6 +367,7 @@ class HomeScreen extends Component {
                 { useNativeDriver: true },
               )}>
               {newCard}
+              {offlineItems}
               {items}
             </Animated.ScrollView>
           </Animated.View>

@@ -22,6 +22,7 @@ export default function itemReducer(state = {items: [], showModal: false, loadin
           items: action.payload,
           showModal: action.showModal
         }
+      
       default:
         return state
     }
