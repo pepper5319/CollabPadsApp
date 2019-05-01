@@ -121,10 +121,18 @@ class AccountScreen extends Component {
 
   render() {
     return (
+        <View style={{flex: 1}}>
+        <Appbar.Header style={{backgroundColor: 'white'}}>
+          <Appbar.BackAction
+            onPress={() => this.props.navigation.goBack()}
+          />
+          <Appbar.Content
+            title="Title"
+            subtitle="Subtitle"
+          />
+        </Appbar.Header>
         <ScrollView style={styles.container} enabled>
-          <View style={{flex: 2, justifyContent: 'flex-end', alignItems: 'center'}}>
-            <Headline style={styles.header}>My Account: {this.props.username}</Headline>
-          </View>
+
           <View style={{flexGrow: 1, justifyContent: 'flex-end'}}>
             <KeyboardAvoidingView behavior="position">
             <Surface style={styles.surface}>
@@ -207,6 +215,7 @@ class AccountScreen extends Component {
           </Portal>
           }
         </ScrollView>
+        </View>
     );
   }
 }
