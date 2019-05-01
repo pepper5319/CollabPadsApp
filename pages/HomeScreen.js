@@ -107,6 +107,7 @@ class HomeScreen extends Component {
   }
 
   componentDidMount(){
+    console.log("MOUNTED");
     if(this.props.token !== null && this.props.token !== undefined && this.props.token !== ''){
       this.props.fetchLists(LISTS_URL, this.props.token);
     }else{

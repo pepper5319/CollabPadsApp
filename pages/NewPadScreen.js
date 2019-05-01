@@ -133,7 +133,7 @@ class NewPadScreen extends Component {
 
     return (
         <View style={styles.container}>
-          <View style={styles.main}>
+          <ScrollView style={styles.main}>
             <Animated.View style={[{flex: 1}, iconStyle]}>
             <Headline style={{marginTop: 16, marginBottom: 16}}>New Pad</Headline>
             <TextInput
@@ -178,7 +178,7 @@ class NewPadScreen extends Component {
               </Button>
             </View>
             </Animated.View>
-          </View>
+          </ScrollView>
         </View>
     );
   }
