@@ -94,7 +94,7 @@ class BottomNav extends Component {
 
   render() {
     var minHeight = isIphoneX() ? 50 : 0;
-    var maxHeight = isIphoneX() ? 50 : 32;
+    var maxHeight = isIphoneX() ? 50 : 0;
     const containerStyle = {
       paddingBottom: this._verticalPos.interpolate({
         inputRange: [0, 1],
